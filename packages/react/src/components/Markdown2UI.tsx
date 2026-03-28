@@ -200,20 +200,25 @@ export function Markdown2UI({
     }
   }
 
+  const confirmationCount = ast.blocks.filter((b) => b.type === 'confirmation').length;
+  const hideSubmit = confirmationCount === 1;
+
   return (
-    <FormContext.Provider value={{ values, setValue, errors }}>
+    <FormContext.Provider value={{ values, setValue, errors, onSubmit: handleSubmit }}>
       <div className={`m2u-form${className ? ` ${className}` : ''}`}>
         {ast.blocks.map((block, i) => (
           <BlockRenderer key={i} block={block} />
         ))}
-        <button
-          type="button"
-          className={`m2u-submit${!canSubmit && attempted ? ' m2u-submit--disabled' : ''}`}
-          disabled={!canSubmit && attempted}
-          onClick={handleSubmit}
-        >
-          {submitLabel}
-        </button>
+        {!hideSubmit && (
+          <button
+            type="button"
+            className={`m2u-submit${!canSubmit && attempted ? ' m2u-submit--disabled' : ''}`}
+            disabled={!canSubmit && attempted}
+            onClick={handleSubmit}
+          >
+            {submitLabel}
+          </button>
+        )}
       </div>
     </FormContext.Provider>
   );

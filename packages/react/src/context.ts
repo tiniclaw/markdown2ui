@@ -10,6 +10,7 @@ export interface FormContextValue {
   values: FormValues;
   setValue: (id: string, value: any) => void;
   errors: Record<string, string>;
+  onSubmit?: () => void;
 }
 
 export const FormContext = createContext<FormContextValue>({

@@ -2,7 +2,7 @@ import { useFormContext } from '../context.js';
 import type { ConfirmationBlock } from '@markdown2ui/parser';
 
 export function Confirmation({ block }: { block: ConfirmationBlock }) {
-  const { values, setValue } = useFormContext();
+  const { values, setValue, onSubmit } = useFormContext();
   const confirmed = values[block.id!] === true;
 
   return (
@@ -19,7 +19,10 @@ export function Confirmation({ block }: { block: ConfirmationBlock }) {
         <button
           type="button"
           className={`m2u-btn ${confirmed ? 'm2u-btn--primary m2u-btn--active' : 'm2u-btn--secondary'}`}
-          onClick={() => setValue(block.id!, true)}
+          onClick={() => {
+            setValue(block.id!, true);
+            if (onSubmit) onSubmit();
+          }}
         >
           {block.yesLabel}
         </button>
