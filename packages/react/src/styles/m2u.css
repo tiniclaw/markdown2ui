@@ -109,6 +109,56 @@
   margin: 0;
 }
 
+/* ─── Image Option Grid ─────────────────────────────────── */
+
+.m2u-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+.m2u-image-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--m2u-outline);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.m2u-image-card:hover {
+  border-color: var(--m2u-primary);
+}
+
+.m2u-image-card--selected {
+  border-color: var(--m2u-primary);
+  box-shadow: 0 0 0 1px var(--m2u-primary);
+}
+
+.m2u-image-card input[type="radio"],
+.m2u-image-card input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.m2u-image-card-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.m2u-image-card-text {
+  padding: 6px 8px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  color: var(--m2u-on-surface);
+}
+
 /* ─── Freestyle Input ────────────────────────────────────── */
 
 .m2u-freestyle {
