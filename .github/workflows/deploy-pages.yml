@@ -1,10 +1,8 @@
-name: Deploy Docs to GitHub Pages
+name: Deploy Playground to GitHub Pages
 
 on:
   push:
     branches: [main]
-    paths:
-      - 'docs/**'
   workflow_dispatch:
 
 permissions:
@@ -23,55 +21,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build site
-        run: |
-          mkdir -p _site
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-          # Copy all docs into the site directory
-          cp -r docs/* _site/
+      - name: Install dependencies
+        working-directory: packages/playground
+        run: npm install
 
-          # Generate index.html linking to each spec file
-          cat > _site/index.html <<'HEREDOC'
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>markdown2ui - Spec Documents</title>
-            <style>
-              body {
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-                max-width: 720px;
-                margin: 4rem auto;
-                padding: 0 1rem;
-                color: #24292f;
-                line-height: 1.6;
-              }
-              h1 { border-bottom: 1px solid #d1d9e0; padding-bottom: 0.5rem; }
-              ul { padding-left: 1.5rem; }
-              li { margin: 0.5rem 0; }
-              a { color: #0969da; text-decoration: none; }
-              a:hover { text-decoration: underline; }
-              .meta { color: #656d76; font-size: 0.85rem; margin-top: 2rem; }
-            </style>
-          </head>
-          <body>
-            <h1>markdown2ui</h1>
-            <p>Specification documents for the markdown2ui project.</p>
-            <h2>Specs</h2>
-            <ul>
-              <li><a href="markdown2ui-spec-v0_9.md">markdown2ui Spec v0.9</a> (latest)</li>
-              <li><a href="markdown2ui-spec-v0_8.md">markdown2ui Spec v0.8</a></li>
-            </ul>
-            <p class="meta">Deployed via GitHub Actions</p>
-          </body>
-          </html>
-          HEREDOC
+      - name: Build playground
+        working-directory: packages/playground
+        run: npm run build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: packages/playground/dist
 
   deploy:
     needs: build
