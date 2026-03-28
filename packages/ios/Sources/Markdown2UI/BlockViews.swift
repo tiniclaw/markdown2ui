@@ -173,6 +173,7 @@ struct GroupedSelectList: View {
 struct BlockView: View {
     let block: Block
     let formState: FormState
+    var onSubmit: (() -> Void)? = nil
 
     var body: some View {
         switch block {
@@ -183,7 +184,7 @@ struct BlockView: View {
         case .sequence(let b):
             SequenceView(block: b, formState: formState)
         case .confirmation(let b):
-            ConfirmationView(block: b, formState: formState)
+            ConfirmationView(block: b, formState: formState, onSubmit: onSubmit)
         case .textInput(let b):
             TextInputView(block: b, formState: formState)
         case .typedInput(let b):
@@ -459,6 +460,7 @@ private struct SequenceListContent: View {
 struct ConfirmationView: View {
     let block: ConfirmationBlock
     let formState: FormState
+    var onSubmit: (() -> Void)? = nil
 
     private var confirmed: Bool {
         formState.getValue(block.id ?? "") ?? false
@@ -471,7 +473,7 @@ struct ConfirmationView: View {
             let noButton = Button { formState.setValue(block.id ?? "", false) } label: {
                 IconText(text: block.noLabel)
             }
-            let yesButton = Button { formState.setValue(block.id ?? "", true) } label: {
+            let yesButton = Button { formState.setValue(block.id ?? "", true); onSubmit?() } label: {
                 IconText(text: block.yesLabel)
             }
 

@@ -135,14 +135,25 @@ function convertBlock(block: Block, elements: Record<string, UIElement>): string
   }
 }
 
+function countConfirmations(blocks: Block[]): number {
+  let count = 0;
+  for (const b of blocks) {
+    if (b.type === 'confirmation') count++;
+    if (b.type === 'group') count += countConfirmations(b.children);
+  }
+  return count;
+}
+
 function astToSpec(ast: AST): Spec {
   counter = 0;
   const elements: Record<string, UIElement> = {};
   const childKeys = ast.blocks.map((b) => convertBlock(b, elements));
 
-  const submitKey = genKey('button');
-  elements[submitKey] = { type: 'Button', props: { label: 'Submit', variant: 'primary' }, children: [] };
-  childKeys.push(submitKey);
+  if (countConfirmations(ast.blocks) !== 1) {
+    const submitKey = genKey('button');
+    elements[submitKey] = { type: 'Button', props: { label: 'Submit', variant: 'primary' }, children: [] };
+    childKeys.push(submitKey);
+  }
 
   const rootKey = genKey('root');
   elements[rootKey] = { type: 'Stack', props: { direction: 'vertical' }, children: childKeys };

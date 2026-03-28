@@ -19,6 +19,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+private fun countConfirmations(blocks: List<Block>): Int =
+    blocks.sumOf { block ->
+        when (block) {
+            is Block.Confirmation -> 1 as Int
+            is Block.Group -> countConfirmations(block.children)
+            else -> 0 as Int
+        }
+    }
+
 @Composable
 fun Markdown2UI(
     ast: Ast,
@@ -29,29 +38,34 @@ fun Markdown2UI(
         FormState().also { it.initializeDefaults(ast.blocks) }
     }
     var errors by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
+    val hideSubmit = remember(ast) { countConfirmations(ast.blocks) == 1 }
+
+    val handleSubmit: () -> Unit = {
+        val validationErrors = formState.validate(ast.blocks)
+        errors = validationErrors
+        if (validationErrors.isEmpty()) {
+            onSubmit(formState.serializeCompact(ast.blocks))
+        }
+    }
 
     LazyColumn(
         modifier = modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         items(ast.blocks, key = { it.hashCode() }) { block ->
-            RenderBlock(block = block, formState = formState, errors = errors)
+            RenderBlock(block = block, formState = formState, errors = errors, onSubmit = if (hideSubmit) handleSubmit else null)
         }
-        item {
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(
-                onClick = {
-                    val validationErrors = formState.validate(ast.blocks)
-                    errors = validationErrors
-                    if (validationErrors.isEmpty()) {
-                        onSubmit(formState.serializeCompact(ast.blocks))
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text("Submit", style = MaterialTheme.typography.labelLarge)
+        if (!hideSubmit) {
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = handleSubmit,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text("Submit", style = MaterialTheme.typography.labelLarge)
+                }
+                Spacer(modifier = Modifier.height(16.dp))
             }
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

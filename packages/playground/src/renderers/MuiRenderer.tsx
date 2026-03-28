@@ -14,7 +14,7 @@ import { validateForm } from './validate';
 
 type Values = Record<string, any>;
 
-function MuiBlock({ block, values, setValue }: { block: Block; values: Values; setValue: (id: string, v: any) => void }) {
+function MuiBlock({ block, values, setValue, onSubmit }: { block: Block; values: Values; setValue: (id: string, v: any) => void; onSubmit?: () => void }) {
   switch (block.type) {
     case 'header':
       return block.level === 1
@@ -232,7 +232,7 @@ function MuiBlock({ block, values, setValue }: { block: Block; values: Values; s
           <p className="mui-label"><IconText text={block.label} /></p>
           <div className="mui-btn-group">
             <button className={`mui-btn ${muiConfirmed ? 'mui-btn--outlined' : 'mui-btn--filled'}`} onClick={() => setValue(block.id!, false)}><IconText text={block.noLabel} /></button>
-            <button className={`mui-btn ${muiConfirmed ? 'mui-btn--filled' : 'mui-btn--outlined'}`} onClick={() => setValue(block.id!, true)}><IconText text={block.yesLabel} /></button>
+            <button className={`mui-btn ${muiConfirmed ? 'mui-btn--filled' : 'mui-btn--outlined'}`} onClick={() => { setValue(block.id!, true); onSubmit?.(); }}><IconText text={block.yesLabel} /></button>
           </div>
         </div>
       );
@@ -253,7 +253,7 @@ function MuiBlock({ block, values, setValue }: { block: Block; values: Values; s
       return (
         <div className="mui-group">
           {block.children.map((child, i) => (
-            <MuiBlock key={i} block={child} values={values} setValue={setValue} />
+            <MuiBlock key={i} block={child} values={values} setValue={setValue} onSubmit={onSubmit} />
           ))}
         </div>
       );
@@ -261,6 +261,15 @@ function MuiBlock({ block, values, setValue }: { block: Block; values: Values; s
     default:
       return null;
   }
+}
+
+function countConfirmations(blocks: Block[]): number {
+  let count = 0;
+  for (const b of blocks) {
+    if (b.type === 'confirmation') count++;
+    if (b.type === 'group') count += countConfirmations(b.children);
+  }
+  return count;
 }
 
 function initValues(blocks: Block[]): Values {
@@ -285,20 +294,28 @@ export function MuiRenderer({ ast, onSubmit }: RendererProps) {
   const [attempted, setAttempted] = useState(false);
   const errors = useMemo(() => validateForm(ast, values), [ast, values]);
   const canSubmit = Object.keys(errors).length === 0;
+  const hideSubmit = countConfirmations(ast.blocks) === 1;
+
+  const handleSubmit = useCallback(() => {
+    setAttempted(true);
+    if (canSubmit) onSubmit?.(serializeValues(ast, values));
+  }, [canSubmit, ast, values, onSubmit]);
 
   return (
     <div className="mui-form">
       {ast.blocks.map((block, i) => (
-        <MuiBlock key={i} block={block} values={values} setValue={setValue} />
+        <MuiBlock key={i} block={block} values={values} setValue={setValue} onSubmit={handleSubmit} />
       ))}
-      <button
-        className="mui-btn mui-btn--filled mui-submit"
-        disabled={!canSubmit && attempted}
-        style={!canSubmit && attempted ? { opacity: 0.4, cursor: 'not-allowed' } : {}}
-        onClick={() => { setAttempted(true); if (canSubmit) onSubmit?.(serializeValues(ast, values)); }}
-      >
-        Submit
-      </button>
+      {!hideSubmit && (
+        <button
+          className="mui-btn mui-btn--filled mui-submit"
+          disabled={!canSubmit && attempted}
+          style={!canSubmit && attempted ? { opacity: 0.4, cursor: 'not-allowed' } : {}}
+          onClick={handleSubmit}
+        >
+          Submit
+        </button>
+      )}
     </div>
   );
 }

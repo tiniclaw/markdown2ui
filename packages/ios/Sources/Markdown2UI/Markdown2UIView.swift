@@ -11,20 +11,37 @@ public struct Markdown2UIView: View {
         self.onSubmit = onSubmit
     }
 
+    private var singleConfirmation: Bool {
+        func count(_ blocks: [Block]) -> Int {
+            blocks.reduce(0) { sum, b in
+                if case .confirmation = b { return sum + 1 }
+                if case .group(let g) = b { return sum + count(g.children) }
+                return sum
+            }
+        }
+        return count(ast.blocks) == 1
+    }
+
+    private func handleSubmit() {
+        guard formState.validate(ast.blocks) else { return }
+        let json = formState.serializeCompact(ast.blocks)
+        onSubmit(json)
+    }
+
     public var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 12) {
                 ForEach(Array(ast.blocks.enumerated()), id: \.offset) { _, block in
-                    BlockView(block: block, formState: formState)
+                    BlockView(block: block, formState: formState, onSubmit: singleConfirmation ? handleSubmit : nil)
                 }
-                Button("Submit") {
-                    guard formState.validate(ast.blocks) else { return }
-                    let json = formState.serializeCompact(ast.blocks)
-                    onSubmit(json)
+                if !singleConfirmation {
+                    Button("Submit") {
+                        handleSubmit()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.top, 8)
                 }
-                .buttonStyle(.borderedProminent)
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.top, 8)
             }
             .padding()
         }

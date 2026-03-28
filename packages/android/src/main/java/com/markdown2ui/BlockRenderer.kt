@@ -65,12 +65,12 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun RenderBlock(block: Block, formState: FormState, errors: Map<String, String> = emptyMap()) {
+fun RenderBlock(block: Block, formState: FormState, errors: Map<String, String> = emptyMap(), onSubmit: (() -> Unit)? = null) {
     when (block) {
         is Block.SingleSelect -> SingleSelectRenderer(block, formState)
         is Block.MultiSelect -> MultiSelectRenderer(block, formState, errors)
         is Block.Sequence -> SequenceRenderer(block, formState)
-        is Block.Confirmation -> ConfirmationRenderer(block, formState)
+        is Block.Confirmation -> ConfirmationRenderer(block, formState, onSubmit)
         is Block.TextInput -> TextInputRenderer(block, formState, errors)
         is Block.TypedInput -> TypedInputRenderer(block, formState, errors)
         is Block.Slider -> SliderRenderer(block, formState)
@@ -399,7 +399,7 @@ private fun SequenceRenderer(block: Block.Sequence, formState: FormState) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ConfirmationRenderer(block: Block.Confirmation, formState: FormState) {
+private fun ConfirmationRenderer(block: Block.Confirmation, formState: FormState, onSubmit: (() -> Unit)? = null) {
     val blockId = block.id ?: return
     val value = (formState.getValue(blockId) as? Boolean) ?: false
 
@@ -423,11 +423,11 @@ private fun ConfirmationRenderer(block: Block.Confirmation, formState: FormState
             }
             if (value == true) {
                 Button(
-                    onClick = { formState.setValue(blockId, true) },
+                    onClick = { formState.setValue(blockId, true); onSubmit?.invoke() },
                 ) { IconText(text = block.yesLabel) }
             } else {
                 OutlinedButton(
-                    onClick = { formState.setValue(blockId, true) },
+                    onClick = { formState.setValue(blockId, true); onSubmit?.invoke() },
                 ) { IconText(text = block.yesLabel) }
             }
         }
