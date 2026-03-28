@@ -32,7 +32,7 @@ jobs:
 
       - name: Build playground
         working-directory: packages/playground
-        run: npm run build
+        run: npx vite build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
