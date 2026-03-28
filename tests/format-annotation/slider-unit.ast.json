@@ -1,0 +1,15 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "slider",
+      "id": "weight",
+      "label": "Weight",
+      "min": 0,
+      "max": 100,
+      "default": 50,
+      "step": 0.5,
+      "displayFormat": { "type": "unit", "unit": "kg" }
+    }
+  ]
+}

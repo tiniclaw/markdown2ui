@@ -1,0 +1,11 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "datetime",
+      "id": "when_exactly",
+      "label": "When exactly?",
+      "default": "NOW"
+    }
+  ]
+}

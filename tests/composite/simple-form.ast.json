@@ -1,0 +1,47 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "header",
+      "level": 1,
+      "text": "New Project"
+    },
+    {
+      "type": "text-input",
+      "id": "project_name",
+      "label": "Project name",
+      "multiline": false,
+      "placeholder": "e.g., MyApp"
+    },
+    {
+      "type": "single-select",
+      "id": "lang",
+      "label": "Language",
+      "required": true,
+      "options": [
+        { "text": "TypeScript", "default": false },
+        { "text": "Python", "default": false },
+        { "text": "Go", "default": true },
+        { "text": "Rust", "default": false }
+      ]
+    },
+    {
+      "type": "multi-select",
+      "id": "features",
+      "label": "Features",
+      "options": [
+        { "text": "Linting", "selected": true },
+        { "text": "Testing", "selected": true },
+        { "text": "CI/CD", "selected": false },
+        { "text": "Docker", "selected": false }
+      ]
+    },
+    {
+      "type": "confirmation",
+      "id": "create_confirm",
+      "label": "Create this project?",
+      "yesLabel": "Yes, create it",
+      "noLabel": "No, cancel"
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+~ price: Price [1 - 100] (10) @currency(USD)

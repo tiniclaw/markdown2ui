@@ -1,0 +1,11 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "file-upload",
+      "id": "upload_the_data_file",
+      "label": "Upload the data file",
+      "extensions": [".csv", ".xlsx"]
+    }
+  ]
+}

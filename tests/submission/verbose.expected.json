@@ -1,0 +1,54 @@
+{
+  "checkin": {
+    "type": "date",
+    "label": "체크인 날짜",
+    "value": "2026-03-26"
+  },
+  "checkout": {
+    "type": "date",
+    "label": "체크아웃 날짜",
+    "value": "2026-03-28"
+  },
+  "budget": {
+    "type": "slider",
+    "label": "1박 예산",
+    "value": 150000,
+    "range": [50000, 500000],
+    "step": 10000,
+    "hint": "단위: 원"
+  },
+  "region": {
+    "type": "single-select",
+    "label": "선호 지역",
+    "value": "스스키노",
+    "options": ["삿포로역 근처", "스스키노", "오도리공원 근처"]
+  },
+  "conditions": {
+    "type": "multi-select",
+    "label": "필요 조건",
+    "value": ["금연"],
+    "options": [
+      { "text": "금연", "selected": true },
+      { "text": "조식 포함", "selected": false },
+      { "text": "대욕장", "selected": false },
+      { "text": "1인실", "selected": false }
+    ]
+  },
+  "site": {
+    "type": "single-select",
+    "label": "예약 사이트",
+    "value": "최저가 아무 데나",
+    "options": ["최저가 아무 데나", "아고다", "부킹닷컴", "트립닷컴"]
+  },
+  "priority": {
+    "type": "sequence",
+    "label": "우선순위 정렬",
+    "value": ["위치", "가격", "리뷰 평점", "청결도"],
+    "items": ["가격", "위치", "리뷰 평점", "청결도"]
+  },
+  "receipt": {
+    "type": "image-upload",
+    "label": "영수증 사진",
+    "value": "receipt_photo.jpg"
+  }
+}

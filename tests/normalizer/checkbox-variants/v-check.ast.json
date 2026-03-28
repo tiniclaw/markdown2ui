@@ -1,0 +1,15 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "multi-select",
+      "id": "options",
+      "label": "Options",
+      "options": [
+        { "text": "Alpha", "selected": true },
+        { "text": "Beta", "selected": false },
+        { "text": "Gamma", "selected": true }
+      ]
+    }
+  ]
+}

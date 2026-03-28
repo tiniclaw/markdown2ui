@@ -1,0 +1,51 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "header",
+      "level": 1,
+      "text": "Bug Report"
+    },
+    {
+      "type": "text-input",
+      "id": "describe_the_bug",
+      "label": "Describe the bug",
+      "multiline": false,
+      "required": true
+    },
+    {
+      "type": "single-select",
+      "id": "severity",
+      "label": "Severity",
+      "options": [
+        { "text": "Low", "default": false },
+        { "text": "Medium", "default": true },
+        { "text": "High", "default": false }
+      ]
+    },
+    {
+      "type": "multi-select",
+      "id": "affected_platforms",
+      "label": "Affected platforms",
+      "options": [
+        { "text": "Web", "selected": true },
+        { "text": "iOS", "selected": true },
+        { "text": "Android", "selected": false },
+        { "text": "Desktop", "selected": false }
+      ]
+    },
+    {
+      "type": "date",
+      "id": "when_did_this_happen",
+      "label": "When did this happen?",
+      "default": "2026-03-15"
+    },
+    {
+      "type": "confirmation",
+      "id": "submit_this_report",
+      "label": "Submit this report?",
+      "yesLabel": "Yes",
+      "noLabel": "No"
+    }
+  ]
+}

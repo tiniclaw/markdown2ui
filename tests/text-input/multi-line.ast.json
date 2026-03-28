@@ -1,0 +1,11 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "text-input",
+      "id": "describe_the_bug_you_encountered",
+      "label": "Describe the bug you encountered.",
+      "multiline": true
+    }
+  ]
+}

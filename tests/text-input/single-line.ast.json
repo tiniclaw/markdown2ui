@@ -1,0 +1,11 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "text-input",
+      "id": "what_is_your_project_name",
+      "label": "What is your project name?",
+      "multiline": false
+    }
+  ]
+}

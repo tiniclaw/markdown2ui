@@ -1,0 +1,25 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "single-select",
+      "id": "color",
+      "label": "Color",
+      "options": [
+        { "text": "Red", "default": true },
+        { "text": "Blue", "default": false },
+        { "text": "Green", "default": false }
+      ]
+    },
+    {
+      "type": "single-select",
+      "id": "size",
+      "label": "Size",
+      "options": [
+        { "text": "Small", "default": true },
+        { "text": "Medium", "default": false },
+        { "text": "Large", "default": false }
+      ]
+    }
+  ]
+}

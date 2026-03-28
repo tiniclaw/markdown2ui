@@ -1,0 +1,5 @@
+priority: Arrange by priority
+1. Speed
+2. Cost
+3. Reliability
+4. Usability

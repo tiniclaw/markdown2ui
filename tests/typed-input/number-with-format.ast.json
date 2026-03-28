@@ -1,0 +1,12 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "typed-input",
+      "id": "amount",
+      "label": "Amount",
+      "format": "number",
+      "displayFormat": { "type": "currency", "code": "KRW" }
+    }
+  ]
+}

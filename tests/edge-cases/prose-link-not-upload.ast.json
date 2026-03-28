@@ -1,0 +1,9 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "prose",
+      "text": "Check out [our docs](https://example.com) for more info."
+    }
+  ]
+}

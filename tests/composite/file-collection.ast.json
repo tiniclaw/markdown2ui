@@ -1,0 +1,36 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "header",
+      "level": 1,
+      "text": "Document Upload"
+    },
+    {
+      "type": "file-upload",
+      "id": "resume",
+      "label": "Resume",
+      "required": true,
+      "extensions": [".pdf", ".docx"]
+    },
+    {
+      "type": "image-upload",
+      "id": "profile_photo",
+      "label": "Profile photo"
+    },
+    {
+      "type": "file-upload",
+      "id": "portfolio",
+      "label": "Portfolio",
+      "extensions": [".pdf"],
+      "hint": "Optional but recommended"
+    },
+    {
+      "type": "text-input",
+      "id": "personal_website",
+      "label": "Personal website",
+      "multiline": false,
+      "prefill": "https://"
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+@date Check-in date | 2026-03-26
+@time Meeting time | 14:00
+@datetime Appointment | 2026-03-26T14:00

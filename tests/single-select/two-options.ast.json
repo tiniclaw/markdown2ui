@@ -1,0 +1,14 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "single-select",
+      "id": "theme",
+      "label": "Theme",
+      "options": [
+        { "text": "Light", "default": true },
+        { "text": "Dark", "default": false }
+      ]
+    }
+  ]
+}

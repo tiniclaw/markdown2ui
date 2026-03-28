@@ -1,0 +1,11 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "text-input",
+      "id": "check_in_date",
+      "label": "Check-in date",
+      "multiline": false
+    }
+  ]
+}

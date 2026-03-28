@@ -1,0 +1,14 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "slider",
+      "id": "rating",
+      "label": "Rating",
+      "min": 1,
+      "max": 5,
+      "default": 3,
+      "displayFormat": { "type": "unit", "unit": "star", "plural": "stars" }
+    }
+  ]
+}

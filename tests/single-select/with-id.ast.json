@@ -1,0 +1,15 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "single-select",
+      "id": "lang",
+      "label": "Preferred language",
+      "options": [
+        { "text": "Kotlin", "default": true },
+        { "text": "Java", "default": false },
+        { "text": "Swift", "default": false }
+      ]
+    }
+  ]
+}

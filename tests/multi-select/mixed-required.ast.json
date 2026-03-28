@@ -1,0 +1,16 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "multi-select",
+      "id": "consents",
+      "label": "Consents",
+      "options": [
+        { "text": "I agree to the privacy policy", "selected": true, "required": true },
+        { "text": "I accept the terms of use", "selected": false, "required": true },
+        { "text": "Send me updates", "selected": true },
+        { "text": "Share data for research", "selected": false }
+      ]
+    }
+  ]
+}

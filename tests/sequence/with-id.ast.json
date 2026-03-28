@@ -1,0 +1,11 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "sequence",
+      "id": "priority",
+      "label": "Arrange by priority",
+      "items": ["Speed", "Cost", "Reliability", "Usability"]
+    }
+  ]
+}

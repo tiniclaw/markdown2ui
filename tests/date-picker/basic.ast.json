@@ -1,0 +1,11 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "date",
+      "id": "when_should_we_schedule_this",
+      "label": "When should we schedule this?",
+      "default": "NOW"
+    }
+  ]
+}

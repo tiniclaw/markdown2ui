@@ -1,0 +1,5 @@
+Shipping speed
+- Express (2-3 business days)
+- Standard (5-7 business days)
+- Economy (10-14 business days)
+// Shipping speed affects total cost.

@@ -1,0 +1,15 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "image-upload",
+      "id": "upload_a_photo",
+      "label": "Upload a photo"
+    },
+    {
+      "type": "file-upload",
+      "id": "upload_a_file",
+      "label": "Upload a file"
+    }
+  ]
+}

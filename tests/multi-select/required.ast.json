@@ -1,0 +1,16 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "multi-select",
+      "id": "conditions",
+      "label": "Requirements",
+      "required": true,
+      "options": [
+        { "text": "Non-smoking", "selected": true },
+        { "text": "Breakfast included", "selected": false },
+        { "text": "Large bath", "selected": false }
+      ]
+    }
+  ]
+}

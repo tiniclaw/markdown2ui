@@ -1,0 +1,11 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "typed-input",
+      "id": "theme_color",
+      "label": "Theme color",
+      "format": "color"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "file-upload",
+      "id": "upload_your_logo",
+      "label": "Upload your logo"
+    }
+  ]
+}

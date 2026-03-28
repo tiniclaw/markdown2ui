@@ -1,0 +1,15 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "slider",
+      "id": "budget",
+      "label": "Budget",
+      "min": 50000,
+      "max": 500000,
+      "default": 150000,
+      "step": 10000,
+      "hint": "단위: 원"
+    }
+  ]
+}

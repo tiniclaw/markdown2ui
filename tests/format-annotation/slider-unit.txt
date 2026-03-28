@@ -1,0 +1,1 @@
+~ weight: Weight [0 - 100] (50) %0.5 @unit(kg)

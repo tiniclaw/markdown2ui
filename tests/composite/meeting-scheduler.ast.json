@@ -1,0 +1,79 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "header",
+      "level": 1,
+      "text": "Schedule Meeting"
+    },
+    {
+      "type": "header",
+      "level": 2,
+      "text": "Time & Date"
+    },
+    {
+      "type": "group",
+      "name": "schedule",
+      "children": [
+        {
+          "type": "date",
+          "id": "meeting_date",
+          "label": "Meeting date",
+          "default": "2026-04-01"
+        },
+        {
+          "type": "time",
+          "id": "start_time",
+          "label": "Start time",
+          "default": "09:00"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "level": 2,
+      "text": "Participants"
+    },
+    {
+      "type": "text-input",
+      "id": "meeting_title",
+      "label": "Meeting title",
+      "multiline": false,
+      "required": true
+    },
+    {
+      "type": "text-input",
+      "id": "agenda",
+      "label": "Agenda",
+      "multiline": false,
+      "placeholder": "Enter meeting agenda"
+    },
+    {
+      "type": "multi-select",
+      "id": "invite",
+      "label": "Invite",
+      "options": [
+        { "text": "Team A", "selected": true },
+        { "text": "Team B", "selected": false },
+        { "text": "Team C", "selected": false },
+        { "text": "Stakeholders", "selected": false }
+      ]
+    },
+    {
+      "type": "sequence",
+      "id": "agenda_priority",
+      "label": "Agenda priority",
+      "items": ["Budget Review", "Q3 Planning", "Hiring Update"]
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "confirmation",
+      "id": "schedule_this_meeting",
+      "label": "Schedule this meeting?",
+      "yesLabel": "Confirm & Send invites",
+      "noLabel": "Go back"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "slider",
+      "id": "progress",
+      "label": "Progress",
+      "min": 0,
+      "max": 100,
+      "default": 50,
+      "displayFormat": { "type": "percent" }
+    }
+  ]
+}

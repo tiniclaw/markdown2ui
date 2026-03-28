@@ -1,0 +1,12 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "confirmation",
+      "id": "are_you_sure_you_want_to_delete_this",
+      "label": "Are you sure you want to delete this?",
+      "yesLabel": "Yes",
+      "noLabel": "No"
+    }
+  ]
+}

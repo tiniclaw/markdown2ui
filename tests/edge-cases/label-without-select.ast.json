@@ -1,0 +1,13 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "prose",
+      "text": "This looks like a label but has no select after it"
+    },
+    {
+      "type": "prose",
+      "text": "Some other prose text"
+    }
+  ]
+}

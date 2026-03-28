@@ -1,0 +1,8 @@
+[checkin] 2026-03-26
+[checkout] 2026-03-28
+[budget] 150000
+[region] 스스키노
+[conditions] 금연
+[site] 최저가 아무 데나
+[priority] 위치, 가격, 리뷰 평점, 청결도
+[receipt] receipt_photo.jpg

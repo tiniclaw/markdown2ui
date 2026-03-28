@@ -1,0 +1,16 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "prose",
+      "text": "Some text"
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "prose",
+      "text": "More text"
+    }
+  ]
+}

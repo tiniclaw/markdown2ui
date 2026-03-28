@@ -1,0 +1,15 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "multi-select",
+      "id": "toppings",
+      "label": "Toppings",
+      "options": [
+        { "text": "Cheese", "selected": false },
+        { "text": "Pepperoni", "selected": false },
+        { "text": "Mushrooms", "selected": false }
+      ]
+    }
+  ]
+}

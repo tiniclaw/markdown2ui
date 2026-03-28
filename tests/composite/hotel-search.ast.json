@@ -1,0 +1,82 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "header",
+      "level": 1,
+      "text": "호텔 찾아줄게"
+    },
+    {
+      "type": "group",
+      "name": "date_range",
+      "children": [
+        {
+          "type": "date",
+          "id": "checkin",
+          "label": "체크인 날짜",
+          "default": "2026-03-26"
+        },
+        {
+          "type": "date",
+          "id": "checkout",
+          "label": "체크아웃 날짜",
+          "default": "NOW"
+        }
+      ]
+    },
+    {
+      "type": "slider",
+      "id": "budget",
+      "label": "1박 예산",
+      "min": 50000,
+      "max": 500000,
+      "default": 150000,
+      "step": 10000,
+      "hint": "단위: 원"
+    },
+    {
+      "type": "single-select",
+      "id": "region",
+      "label": "선호 지역",
+      "options": [
+        { "text": "삿포로역 근처", "default": false },
+        { "text": "스스키노", "default": true },
+        { "text": "오도리공원 근처", "default": false }
+      ]
+    },
+    {
+      "type": "multi-select",
+      "id": "conditions",
+      "label": "필요 조건",
+      "options": [
+        { "text": "금연", "selected": true },
+        { "text": "조식 포함", "selected": false },
+        { "text": "대욕장", "selected": false },
+        { "text": "1인실", "selected": false }
+      ]
+    },
+    {
+      "type": "single-select",
+      "id": "site",
+      "label": "예약 사이트",
+      "required": true,
+      "options": [
+        { "text": "최저가 아무 데나", "default": true },
+        { "text": "아고다", "default": false },
+        { "text": "부킹닷컴", "default": false },
+        { "text": "트립닷컴", "default": false }
+      ]
+    },
+    {
+      "type": "sequence",
+      "id": "priority",
+      "label": "우선순위 정렬",
+      "items": ["가격", "위치", "리뷰 평점", "청결도"]
+    },
+    {
+      "type": "image-upload",
+      "id": "receipt",
+      "label": "영수증 사진"
+    }
+  ]
+}

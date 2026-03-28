@@ -1,0 +1,16 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "single-select",
+      "id": "shipping_speed",
+      "label": "Shipping speed",
+      "options": [
+        { "text": "Express (2-3 business days)", "default": true },
+        { "text": "Standard (5-7 business days)", "default": false },
+        { "text": "Economy (10-14 business days)", "default": false }
+      ],
+      "hint": "Shipping speed affects total cost."
+    }
+  ]
+}

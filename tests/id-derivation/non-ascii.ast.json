@@ -1,0 +1,11 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "text-input",
+      "id": "budget",
+      "label": "Budget (만원)?",
+      "multiline": false
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "date",
+      "id": "check_in_date",
+      "label": "Check-in date",
+      "required": true,
+      "default": "NOW"
+    }
+  ]
+}

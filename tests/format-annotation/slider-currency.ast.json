@@ -1,0 +1,15 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "slider",
+      "id": "budget",
+      "label": "Budget",
+      "min": 1000,
+      "max": 10000,
+      "default": 5000,
+      "step": 1000,
+      "displayFormat": { "type": "currency", "code": "KRW" }
+    }
+  ]
+}

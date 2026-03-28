@@ -1,0 +1,21 @@
+# Bug Report
+
+>! severity_desc: Severity description
+
+Priority
+- Low
+- Medium
+- High (default)
+- Critical
+
+>>! Steps to reproduce
+
+Affected platforms
+- [x] Web
+- [ ] iOS
+- [ ] Android
+- [ ] Desktop
+
+![Screenshot]()
+
+?! Submit this bug report?

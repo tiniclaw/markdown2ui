@@ -1,0 +1,29 @@
+# Schedule Meeting
+
+## Time & Date
+
+{ schedule
+@date Meeting date | 2026-04-01
+@time Start time | 09:00
+}
+
+## Participants
+
+>! Meeting title
+
+> Agenda | Enter meeting agenda
+
+Invite
+- [x] Team A
+- [ ] Team B
+- [ ] Team C
+- [ ] Stakeholders
+
+Agenda priority
+1. Budget Review
+2. Q3 Planning
+3. Hiring Update
+
+---
+
+?! Schedule this meeting? ? Confirm & Send invites : Go back

@@ -1,0 +1,14 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "multi-select",
+      "id": "agreements",
+      "label": "Agreements",
+      "options": [
+        { "text": "Terms of Service", "selected": false, "required": true },
+        { "text": "Newsletter", "selected": true }
+      ]
+    }
+  ]
+}

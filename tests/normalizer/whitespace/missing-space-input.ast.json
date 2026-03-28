@@ -1,0 +1,17 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "text-input",
+      "id": "what_is_your_name",
+      "label": "What is your name?",
+      "multiline": false
+    },
+    {
+      "type": "text-input",
+      "id": "describe_the_issue",
+      "label": "Describe the issue",
+      "multiline": true
+    }
+  ]
+}

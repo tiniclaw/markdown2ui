@@ -1,0 +1,10 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "image-upload",
+      "id": "upload_a_photo_of_the_issue",
+      "label": "Upload a photo of the issue"
+    }
+  ]
+}

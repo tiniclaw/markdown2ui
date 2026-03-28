@@ -1,0 +1,12 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "text-input",
+      "id": "issue",
+      "label": "Describe the issue",
+      "multiline": true,
+      "required": true
+    }
+  ]
+}

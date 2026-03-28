@@ -1,0 +1,25 @@
+# 주문하기
+
+Menu type
+- 코스 A
+- 코스 B
+- 코스 C
+
+Sides
+- [x] 밥
+- [ ] 샐러드
+- [x] 수프
+- [ ] 빵
+
+~ Quantity [1-10] (2)
+
+{ contact_info
+> name: Name
+> phone: Phone
+}
+
+payment!: Payment method
+- Card
+- Cash
+- Mobile
+// Cash payment only available at counter

@@ -1,0 +1,12 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "confirmation",
+      "id": "delete_confirm",
+      "label": "Delete this file?",
+      "yesLabel": "Confirm",
+      "noLabel": "Cancel"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "text-input",
+      "id": "name",
+      "label": "Name",
+      "multiline": false,
+      "hint": "Line one of the hint.\nLine two of the hint."
+    }
+  ]
+}

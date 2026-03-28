@@ -1,0 +1,11 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "time",
+      "id": "what_time_works_for_you",
+      "label": "What time works for you?",
+      "default": "NOW"
+    }
+  ]
+}

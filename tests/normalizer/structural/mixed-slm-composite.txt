@@ -1,0 +1,17 @@
+# Bug Report
+
+>!Describe the bug
+**Severity**
+* Low
+* Medium (default)
+* High
+
+Affected platforms
+-[X] Web
+-[v] iOS
+-[ ] Android
+-() Desktop
+
+@Date When did this happen? | 2026-03-15
+
+? Submit this report?

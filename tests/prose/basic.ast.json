@@ -1,0 +1,9 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "prose",
+      "text": "Here is some explanatory text about the form."
+    }
+  ]
+}

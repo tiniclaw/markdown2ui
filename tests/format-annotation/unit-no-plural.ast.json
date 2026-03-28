@@ -1,0 +1,14 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "slider",
+      "id": "count",
+      "label": "Count",
+      "min": 1,
+      "max": 100,
+      "default": 5,
+      "displayFormat": { "type": "unit", "unit": "개" }
+    }
+  ]
+}

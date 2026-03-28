@@ -1,0 +1,12 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "text-input",
+      "id": "company_name",
+      "label": "Company name",
+      "multiline": false,
+      "required": true
+    }
+  ]
+}

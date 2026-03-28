@@ -1,0 +1,14 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "slider",
+      "id": "budget",
+      "label": "Budget (만원)",
+      "min": 5,
+      "max": 50,
+      "default": 15,
+      "step": 5
+    }
+  ]
+}

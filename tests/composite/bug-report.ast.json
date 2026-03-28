@@ -1,0 +1,58 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "header",
+      "level": 1,
+      "text": "Bug Report"
+    },
+    {
+      "type": "text-input",
+      "id": "severity_desc",
+      "label": "Severity description",
+      "multiline": false,
+      "required": true
+    },
+    {
+      "type": "single-select",
+      "id": "priority",
+      "label": "Priority",
+      "options": [
+        { "text": "Low", "default": false },
+        { "text": "Medium", "default": false },
+        { "text": "High", "default": true },
+        { "text": "Critical", "default": false }
+      ]
+    },
+    {
+      "type": "text-input",
+      "id": "steps_to_reproduce",
+      "label": "Steps to reproduce",
+      "multiline": true,
+      "required": true
+    },
+    {
+      "type": "multi-select",
+      "id": "affected_platforms",
+      "label": "Affected platforms",
+      "options": [
+        { "text": "Web", "selected": true },
+        { "text": "iOS", "selected": false },
+        { "text": "Android", "selected": false },
+        { "text": "Desktop", "selected": false }
+      ]
+    },
+    {
+      "type": "image-upload",
+      "id": "screenshot",
+      "label": "Screenshot"
+    },
+    {
+      "type": "confirmation",
+      "id": "submit_this_bug_report",
+      "label": "Submit this bug report?",
+      "yesLabel": "Yes",
+      "noLabel": "No"
+    }
+  ]
+}

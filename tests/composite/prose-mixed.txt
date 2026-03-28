@@ -1,0 +1,13 @@
+I found several options for you. Here are the details:
+
+---
+
+Option
+- Option A
+- Option B
+
+**Option A** is recommended for most users.
+
+> Notes
+
+You can also check [our FAQ](https://example.com/faq) for more info.

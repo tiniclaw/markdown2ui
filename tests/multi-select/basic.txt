@@ -1,0 +1,5 @@
+Requirements
+- [x] Non-smoking
+- [ ] Breakfast included
+- [ ] Large bath
+- [ ] Single room

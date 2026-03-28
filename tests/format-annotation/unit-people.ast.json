@@ -1,0 +1,14 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "slider",
+      "id": "guests",
+      "label": "Guests",
+      "min": 1,
+      "max": 10,
+      "default": 2,
+      "displayFormat": { "type": "unit", "unit": "person", "plural": "people" }
+    }
+  ]
+}

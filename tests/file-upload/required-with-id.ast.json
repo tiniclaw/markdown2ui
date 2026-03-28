@@ -1,0 +1,12 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "file-upload",
+      "id": "report",
+      "label": "Upload the report",
+      "required": true,
+      "extensions": [".pdf"]
+    }
+  ]
+}

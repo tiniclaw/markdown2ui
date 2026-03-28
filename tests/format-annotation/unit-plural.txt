@@ -1,0 +1,1 @@
+~ rating: Rating [1 - 5] (3) @unit(star|stars)

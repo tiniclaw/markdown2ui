@@ -1,0 +1,12 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "typed-input",
+      "id": "user_email",
+      "label": "Email address",
+      "format": "email",
+      "placeholder": "user@example.com"
+    }
+  ]
+}

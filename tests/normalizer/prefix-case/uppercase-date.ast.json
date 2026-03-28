@@ -1,0 +1,23 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "date",
+      "id": "check_in_date",
+      "label": "Check-in date",
+      "default": "2026-03-26"
+    },
+    {
+      "type": "time",
+      "id": "meeting_time",
+      "label": "Meeting time",
+      "default": "14:00"
+    },
+    {
+      "type": "datetime",
+      "id": "appointment",
+      "label": "Appointment",
+      "default": "2026-03-26T14:00"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "group",
+      "name": "name_fields",
+      "children": [
+        {
+          "type": "text-input",
+          "id": "first_name",
+          "label": "First name",
+          "multiline": false
+        },
+        {
+          "type": "text-input",
+          "id": "last_name",
+          "label": "Last name",
+          "multiline": false
+        }
+      ]
+    }
+  ]
+}

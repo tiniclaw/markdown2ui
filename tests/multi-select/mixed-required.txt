@@ -1,0 +1,5 @@
+Consents
+- [x]! I agree to the privacy policy
+- [ ]! I accept the terms of use
+- [x] Send me updates
+- [ ] Share data for research

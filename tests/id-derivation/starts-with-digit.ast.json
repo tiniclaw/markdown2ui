@@ -1,0 +1,15 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "single-select",
+      "id": "field_1",
+      "label": "1박 예산",
+      "options": [
+        { "text": "10만원", "default": true },
+        { "text": "20만원", "default": false },
+        { "text": "30만원", "default": false }
+      ]
+    }
+  ]
+}

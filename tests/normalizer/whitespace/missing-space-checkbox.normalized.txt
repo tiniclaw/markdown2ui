@@ -1,0 +1,4 @@
+Requirements
+- [x] Non-smoking
+- [ ] Breakfast
+- [ ] Large bath

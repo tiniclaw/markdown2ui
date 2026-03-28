@@ -1,0 +1,474 @@
+/* markdown2ui default theme — uses CSS custom properties for theming */
+
+:root {
+  --m2u-primary: #1a73e8;
+  --m2u-on-primary: #ffffff;
+  --m2u-primary-container: #d2e3fc;
+  --m2u-on-primary-container: #174ea6;
+  --m2u-surface: #ffffff;
+  --m2u-surface-container-low: #f8f9fa;
+  --m2u-on-surface: #202124;
+  --m2u-on-surface-variant: #5f6368;
+  --m2u-outline: #dadce0;
+  --m2u-outline-variant: #e8eaed;
+  --m2u-error: #d93025;
+  --m2u-on-error: #ffffff;
+  --m2u-radius: 12px;
+  --m2u-spacing: 12px;
+  --m2u-font-family: system-ui, -apple-system, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --m2u-primary: #8ab4f8;
+    --m2u-on-primary: #062e6f;
+    --m2u-primary-container: #394457;
+    --m2u-on-primary-container: #c2d9fc;
+    --m2u-surface: #202124;
+    --m2u-surface-container-low: #292a2d;
+    --m2u-on-surface: #e8eaed;
+    --m2u-on-surface-variant: #9aa0a6;
+    --m2u-outline: #5f6368;
+    --m2u-outline-variant: #3c4043;
+    --m2u-error: #f28b82;
+    --m2u-on-error: #ffffff;
+  }
+}
+
+/* ─── Form Container ──────────────────────────────────────── */
+
+.m2u-form {
+  font-family: var(--m2u-font-family);
+  color: var(--m2u-on-surface);
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--m2u-spacing);
+}
+
+/* ─── Card Container ─────────────────────────────────────── */
+
+.m2u-card {
+  background: var(--m2u-surface-container-low);
+  border: 1px solid var(--m2u-outline);
+  border-radius: var(--m2u-radius);
+  padding: 12px 16px;
+}
+
+/* ─── Labels ─────────────────────────────────────────────── */
+
+.m2u-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--m2u-on-surface);
+  margin-bottom: 8px;
+}
+
+.m2u-required {
+  color: var(--m2u-error);
+}
+
+/* ─── Options (Radio / Checkbox) ─────────────────────────── */
+
+.m2u-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.m2u-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--m2u-outline-variant);
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 150ms ease;
+}
+
+.m2u-option:first-child {
+  border-top: none;
+}
+
+.m2u-option:hover {
+  background: var(--m2u-primary-container);
+}
+
+.m2u-option--selected {
+  background: var(--m2u-primary-container);
+  color: var(--m2u-on-primary-container);
+}
+
+.m2u-option input[type="radio"],
+.m2u-option input[type="checkbox"] {
+  accent-color: var(--m2u-primary);
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+/* ─── Freestyle Input ────────────────────────────────────── */
+
+.m2u-freestyle {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  border-top: 1px solid var(--m2u-outline-variant);
+  background: transparent;
+  font-size: 13px;
+  color: var(--m2u-on-surface);
+  font-family: var(--m2u-font-family);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.m2u-freestyle::placeholder {
+  color: var(--m2u-on-surface-variant);
+}
+
+.m2u-freestyle:focus {
+  background: var(--m2u-surface);
+}
+
+/* ─── Text Input / Textarea ──────────────────────────────── */
+
+.m2u-input,
+.m2u-textarea {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--m2u-outline);
+  border-radius: 8px;
+  background: var(--m2u-surface);
+  font-size: 14px;
+  color: var(--m2u-on-surface);
+  font-family: var(--m2u-font-family);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 150ms ease;
+}
+
+.m2u-input:focus,
+.m2u-textarea:focus {
+  border-color: var(--m2u-primary);
+}
+
+.m2u-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ─── Slider ─────────────────────────────────────────────── */
+
+.m2u-slider-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.m2u-slider {
+  flex: 1;
+  accent-color: var(--m2u-primary);
+}
+
+.m2u-slider-min,
+.m2u-slider-max {
+  font-size: 12px;
+  color: var(--m2u-on-surface-variant);
+  white-space: nowrap;
+}
+
+.m2u-slider-value {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--m2u-primary);
+  margin-top: 4px;
+}
+
+/* ─── Sequence (Reorderable List) ────────────────────────── */
+
+.m2u-sequence {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.m2u-sequence-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--m2u-outline-variant);
+  font-size: 14px;
+}
+
+.m2u-sequence-item:first-child {
+  border-top: none;
+}
+
+.m2u-drag-handle {
+  cursor: grab;
+  color: var(--m2u-on-surface-variant);
+  user-select: none;
+  font-size: 16px;
+}
+
+.m2u-sequence-text {
+  flex: 1;
+}
+
+.m2u-sequence-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.m2u-sequence-controls button {
+  background: var(--m2u-surface);
+  border: 1px solid var(--m2u-outline);
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--m2u-on-surface-variant);
+  transition: background 100ms ease;
+}
+
+.m2u-sequence-controls button:hover:not(:disabled) {
+  background: var(--m2u-primary-container);
+}
+
+.m2u-sequence-controls button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ─── Confirmation ───────────────────────────────────────── */
+
+.m2u-confirmation {
+  padding: 4px 0;
+}
+
+.m2u-confirmation-label {
+  font-size: 14px;
+  margin: 0 0 8px;
+}
+
+.m2u-confirmation-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.m2u-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--m2u-font-family);
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.m2u-btn--primary {
+  background: var(--m2u-primary);
+  color: var(--m2u-on-primary);
+  border: 1px solid var(--m2u-primary);
+}
+
+.m2u-btn--primary:not(.m2u-btn--active) {
+  background: transparent;
+  color: var(--m2u-on-surface);
+  border: 1px solid var(--m2u-outline);
+}
+
+.m2u-btn--secondary {
+  background: transparent;
+  color: var(--m2u-on-surface);
+  border: 1px solid var(--m2u-outline);
+}
+
+.m2u-btn--secondary.m2u-btn--active {
+  background: var(--m2u-primary);
+  color: var(--m2u-on-primary);
+  border-color: var(--m2u-primary);
+}
+
+/* ─── File / Image Upload ────────────────────────────────── */
+
+.m2u-upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 20px;
+  border: 2px dashed var(--m2u-outline);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.m2u-upload-area:hover {
+  border-color: var(--m2u-primary);
+  background: var(--m2u-primary-container);
+}
+
+.m2u-upload-icon {
+  font-size: 24px;
+}
+
+.m2u-upload-text {
+  font-size: 13px;
+  color: var(--m2u-on-surface-variant);
+}
+
+.m2u-upload-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: 1px solid var(--m2u-outline);
+  border-radius: 8px;
+  background: var(--m2u-surface);
+}
+
+.m2u-upload-filename {
+  font-size: 13px;
+}
+
+.m2u-upload-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--m2u-on-surface-variant);
+  font-size: 14px;
+  padding: 4px;
+}
+
+/* ─── Headers ────────────────────────────────────────────── */
+
+.m2u-header {
+  margin: 0;
+  color: var(--m2u-on-surface);
+}
+
+.m2u-h1 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.m2u-h2 {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ─── Prose ──────────────────────────────────────────────── */
+
+.m2u-prose {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--m2u-on-surface);
+  margin: 0;
+}
+
+/* ─── Hint ───────────────────────────────────────────────── */
+
+.m2u-hint {
+  font-size: 12px;
+  color: var(--m2u-on-surface-variant);
+  margin: 4px 0 0;
+}
+
+/* ─── Error ──────────────────────────────────────────────── */
+
+.m2u-error {
+  font-size: 12px;
+  color: var(--m2u-error);
+  margin: 4px 0 0;
+}
+
+/* ─── Divider ────────────────────────────────────────────── */
+
+.m2u-divider {
+  border: none;
+  border-top: 1px solid var(--m2u-outline-variant);
+  margin: 4px 0;
+}
+
+/* ─── Group ──────────────────────────────────────────────── */
+
+.m2u-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m2u-spacing);
+  background: var(--m2u-surface-container-low);
+  border: 1px solid var(--m2u-outline);
+  border-radius: var(--m2u-radius);
+  padding: 12px 16px;
+}
+
+.m2u-group .m2u-card {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+@media (min-width: 600px) {
+  .m2u-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 840px) {
+  .m2u-group {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+/* ─── Submit Button ──────────────────────────────────────── */
+
+.m2u-submit {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--m2u-primary);
+  color: var(--m2u-on-primary);
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--m2u-font-family);
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+
+.m2u-submit:hover {
+  opacity: 0.9;
+}
+
+.m2u-submit:active {
+  opacity: 0.8;
+}
+
+.m2u-submit--disabled,
+.m2u-submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ─── Reduced Motion ─────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .m2u-option,
+  .m2u-btn,
+  .m2u-input,
+  .m2u-textarea,
+  .m2u-upload-area,
+  .m2u-submit {
+    transition: none;
+  }
+}

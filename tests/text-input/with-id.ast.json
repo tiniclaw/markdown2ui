@@ -1,0 +1,13 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "text-input",
+      "id": "project_name",
+      "label": "What is your project name?",
+      "multiline": false,
+      "placeholder": "e.g., MyApp",
+      "prefill": "MyAwesomeApp"
+    }
+  ]
+}

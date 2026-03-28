@@ -1,0 +1,12 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "typed-input",
+      "id": "phone_number",
+      "label": "Phone number",
+      "format": "tel",
+      "placeholder": "+1 (555) 000-0000"
+    }
+  ]
+}

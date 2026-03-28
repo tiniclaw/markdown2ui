@@ -1,0 +1,10 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "header",
+      "level": 1,
+      "text": "Choose your preferences"
+    }
+  ]
+}

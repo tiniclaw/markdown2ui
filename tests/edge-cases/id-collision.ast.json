@@ -1,0 +1,17 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "text-input",
+      "id": "name",
+      "label": "Name",
+      "multiline": false
+    },
+    {
+      "type": "text-input",
+      "id": "name_2",
+      "label": "Name",
+      "multiline": false
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "version": "0.9",
+  "blocks": [
+    {
+      "type": "header",
+      "level": 1,
+      "text": "주문하기"
+    },
+    {
+      "type": "single-select",
+      "id": "menu_type",
+      "label": "Menu type",
+      "options": [
+        { "text": "코스 A", "default": true },
+        { "text": "코스 B", "default": false },
+        { "text": "코스 C", "default": false }
+      ]
+    },
+    {
+      "type": "multi-select",
+      "id": "sides",
+      "label": "Sides",
+      "options": [
+        { "text": "밥", "selected": true },
+        { "text": "샐러드", "selected": false },
+        { "text": "수프", "selected": true },
+        { "text": "빵", "selected": false }
+      ]
+    },
+    {
+      "type": "slider",
+      "id": "quantity",
+      "label": "Quantity",
+      "min": 1,
+      "max": 10,
+      "default": 2
+    },
+    {
+      "type": "group",
+      "name": "contact_info",
+      "children": [
+        {
+          "type": "text-input",
+          "id": "name",
+          "label": "Name",
+          "multiline": false
+        },
+        {
+          "type": "text-input",
+          "id": "phone",
+          "label": "Phone",
+          "multiline": false
+        }
+      ]
+    },
+    {
+      "type": "single-select",
+      "id": "payment",
+      "label": "Payment method",
+      "required": true,
+      "options": [
+        { "text": "Card", "default": true },
+        { "text": "Cash", "default": false },
+        { "text": "Mobile", "default": false }
+      ],
+      "hint": "Cash payment only available at counter"
+    }
+  ]
+}

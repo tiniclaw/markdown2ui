@@ -1,0 +1,17 @@
+# New Project
+
+> project_name: Project name | e.g., MyApp
+
+lang!: Language
+- TypeScript
+- Python
+- Go (default)
+- Rust
+
+Features
+- [x] Linting
+- [x] Testing
+- [ ] CI/CD
+- [ ] Docker
+
+?! create_confirm: Create this project? ? Yes, create it : No, cancel

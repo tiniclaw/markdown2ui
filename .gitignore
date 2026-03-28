@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.gradle/
+.build/
+build/
+*.xcodeproj/
+*.xcworkspace/
+DerivedData/
+.expo/
+.vite/
+.claude/
+.vscode/
+*.hprof
