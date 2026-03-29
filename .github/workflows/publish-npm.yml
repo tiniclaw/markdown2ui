@@ -1,0 +1,54 @@
+name: Publish to npm
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+
+      # Build and publish parser first (react depends on it)
+      - name: Install parser dependencies
+        working-directory: packages/parser
+        run: npm install
+
+      - name: Build parser
+        working-directory: packages/parser
+        run: npm run build
+
+      - name: Publish parser
+        working-directory: packages/parser
+        run: npm publish --access public --provenance
+
+      # Fix file: dependency before publishing react
+      - name: Prepare react package
+        working-directory: packages/react
+        run: |
+          VERSION=$(node -p "require('../parser/package.json').version")
+          sed -i "s|\"@markdown2ui/parser\": \"file:../parser\"|\"@markdown2ui/parser\": \"^${VERSION}\"|" package.json
+
+      - name: Install react dependencies
+        working-directory: packages/react
+        run: npm install
+
+      - name: Build react
+        working-directory: packages/react
+        run: npm run build
+
+      - name: Publish react
+        working-directory: packages/react
+        run: npm publish --access public --provenance
