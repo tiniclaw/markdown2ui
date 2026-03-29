@@ -16,7 +16,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -24,13 +23,20 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org
 
-      - name: Configure git
+      # Skip if the push is a version bump commit from this workflow
+      - name: Check if version bump commit
+        id: check
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          if echo "$COMMIT_MSG" | grep -qP '^v\d+\.\d+\.\d+$'; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
 
       # Determine version bump type from merge commit message
       - name: Determine version bump
+        if: steps.check.outputs.skip == 'false'
         id: bump
         run: |
           COMMIT_MSG=$(git log -1 --pretty=%B)
@@ -42,57 +48,64 @@ jobs:
             echo "type=patch" >> "$GITHUB_OUTPUT"
           fi
 
-      # Bump version in parser
+      # Bump version in both packages (locally, for publishing)
       - name: Bump parser version
+        if: steps.check.outputs.skip == 'false'
         working-directory: packages/parser
         run: npm version ${{ steps.bump.outputs.type }} --no-git-tag-version
 
-      # Sync version to react
       - name: Bump react version
+        if: steps.check.outputs.skip == 'false'
         working-directory: packages/react
         run: npm version ${{ steps.bump.outputs.type }} --no-git-tag-version
 
-      # Read the new version for tagging
       - name: Get new version
+        if: steps.check.outputs.skip == 'false'
         id: version
         run: echo "version=$(node -p "require('./packages/parser/package.json').version")" >> "$GITHUB_OUTPUT"
 
-      # Commit version bump and tag
-      - name: Commit version bump
-        run: |
-          git add packages/parser/package.json packages/react/package.json
-          git commit -m "v${{ steps.version.outputs.version }}"
-          git tag "v${{ steps.version.outputs.version }}"
-          git push origin main --tags
-
       # Build and publish parser first (react depends on it)
       - name: Install parser dependencies
+        if: steps.check.outputs.skip == 'false'
         working-directory: packages/parser
         run: npm install
 
       - name: Build parser
+        if: steps.check.outputs.skip == 'false'
         working-directory: packages/parser
         run: npm run build
 
       - name: Publish parser
+        if: steps.check.outputs.skip == 'false'
         working-directory: packages/parser
         run: npm publish --access public --provenance
 
       # Fix file: dependency before publishing react
       - name: Prepare react package
+        if: steps.check.outputs.skip == 'false'
         working-directory: packages/react
         run: |
           VERSION=$(node -p "require('../parser/package.json').version")
           sed -i "s|\"@markdown2ui/parser\": \"file:../parser\"|\"@markdown2ui/parser\": \"^${VERSION}\"|" package.json
 
       - name: Install react dependencies
+        if: steps.check.outputs.skip == 'false'
         working-directory: packages/react
         run: npm install
 
       - name: Build react
+        if: steps.check.outputs.skip == 'false'
         working-directory: packages/react
         run: npm run build
 
       - name: Publish react
+        if: steps.check.outputs.skip == 'false'
         working-directory: packages/react
         run: npm publish --access public --provenance
+
+      # Create a GitHub Release with the version tag (no push to protected branch)
+      - name: Create GitHub Release
+        if: steps.check.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "v${{ steps.version.outputs.version }}" --generate-notes --title "v${{ steps.version.outputs.version }}"
