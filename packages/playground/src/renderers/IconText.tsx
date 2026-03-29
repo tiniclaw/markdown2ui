@@ -29,6 +29,17 @@ export function IconText({ text }: { text: string }) {
 }
 
 /**
+ * Renders option text with label:description formatting.
+ * Text before the first colon is bolded; text after is normal weight.
+ */
+export function OptionIconText({ text }: { text: string }) {
+  const { icon, text: rest } = processText(text, faResolver);
+  const idx = rest.indexOf(':');
+  if (idx < 0) return <>{renderIcon(icon ?? null)}{rest}</>;
+  return <>{renderIcon(icon ?? null)}<strong>{rest.slice(0, idx)}</strong>:{rest.slice(idx + 1)}</>;
+}
+
+/**
  * Hook: process a group of texts with consistent icon resolution.
  * If any :name: icon fails to resolve from FA, ALL drop their icons.
  */

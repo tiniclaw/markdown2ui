@@ -1,6 +1,6 @@
 {
   "name": "@markdown2ui/parser",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Reference parser for the markdown2ui v0.9 specification",
   "type": "module",
   "main": "./dist/index.cjs",

@@ -9,7 +9,7 @@ import type { Block } from '@markdown2ui/parser';
 import type { RendererProps } from './types';
 import { serializeValues } from './serialize';
 import { formatDisplayValue } from './formatValue';
-import { IconText } from './IconText';
+import { IconText, OptionIconText } from './IconText';
 import { validateForm } from './validate';
 
 type Values = Record<string, any>;
@@ -42,7 +42,7 @@ function ShadcnBlock({ block, values, setValue, onSubmit }: { block: Block; valu
                   onClick={() => setValue(block.id!, opt.text)}
                 >
                   {opt.image && <img src={opt.image} alt={opt.text} className="sh-image-card-img" />}
-                  <span className="sh-image-card-label"><IconText text={opt.text} /></span>
+                  <span className="sh-image-card-label"><OptionIconText text={opt.text} /></span>
                 </button>
               ))}
             </div>
@@ -53,7 +53,7 @@ function ShadcnBlock({ block, values, setValue, onSubmit }: { block: Block; valu
                   <div className={`sh-radio-circle${selected === opt.text ? ' sh-radio-circle--checked' : ''}`}>
                     {selected === opt.text && <div className="sh-radio-dot" />}
                   </div>
-                  <span><IconText text={opt.text} /></span>
+                  <span><OptionIconText text={opt.text} /></span>
                 </label>
               ))}
             </div>
@@ -82,7 +82,7 @@ function ShadcnBlock({ block, values, setValue, onSubmit }: { block: Block; valu
                   {opt.image && <img src={opt.image} alt={opt.text} className="sh-image-card-img" />}
                   <span className="sh-image-card-label">
                     {checked.includes(opt.text) && <span className="sh-check-icon">&#10003; </span>}
-                    <IconText text={opt.text} />
+                    <OptionIconText text={opt.text} />
                   </span>
                 </button>
               ))}
@@ -97,7 +97,7 @@ function ShadcnBlock({ block, values, setValue, onSubmit }: { block: Block; valu
                   <div className={`sh-checkbox-box${checked.includes(opt.text) ? ' sh-checkbox-box--checked' : ''}`}>
                     {checked.includes(opt.text) && <span className="sh-check-icon">&#10003;</span>}
                   </div>
-                  <span><IconText text={opt.text} /></span>
+                  <span><OptionIconText text={opt.text} /></span>
                 </label>
               ))}
             </div>

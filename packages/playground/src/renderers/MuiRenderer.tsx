@@ -9,7 +9,7 @@ import type { Block } from '@markdown2ui/parser';
 import type { RendererProps } from './types';
 import { serializeValues } from './serialize';
 import { formatDisplayValue } from './formatValue';
-import { IconText } from './IconText';
+import { IconText, OptionIconText } from './IconText';
 import { validateForm } from './validate';
 
 type Values = Record<string, any>;
@@ -42,7 +42,7 @@ function MuiBlock({ block, values, setValue, onSubmit }: { block: Block; values:
                   onClick={() => setValue(block.id!, opt.text)}
                 >
                   {opt.image && <img src={opt.image} alt={opt.text} className="mui-image-card-img" />}
-                  <span className="mui-image-card-label"><IconText text={opt.text} /></span>
+                  <span className="mui-image-card-label"><OptionIconText text={opt.text} /></span>
                 </button>
               ) : (
                 <button
@@ -50,7 +50,7 @@ function MuiBlock({ block, values, setValue, onSubmit }: { block: Block; values:
                   className={`mui-chip${selected === opt.text ? ' mui-chip--selected' : ''}`}
                   onClick={() => setValue(block.id!, opt.text)}
                 >
-                  <IconText text={opt.text} />
+                  <OptionIconText text={opt.text} />
                 </button>
               )
             )}
@@ -80,7 +80,7 @@ function MuiBlock({ block, values, setValue, onSubmit }: { block: Block; values:
                   {opt.image && <img src={opt.image} alt={opt.text} className="mui-image-card-img" />}
                   <span className="mui-image-card-label">
                     {checked.includes(opt.text) && <span className="mui-chip-check">&#10003; </span>}
-                    <IconText text={opt.text} />
+                    <OptionIconText text={opt.text} />
                   </span>
                 </button>
               ) : (
@@ -93,7 +93,7 @@ function MuiBlock({ block, values, setValue, onSubmit }: { block: Block; values:
                   }}
                 >
                   {checked.includes(opt.text) && <span className="mui-chip-check">&#10003; </span>}
-                  <IconText text={opt.text} />
+                  <OptionIconText text={opt.text} />
                 </button>
               )
             )}

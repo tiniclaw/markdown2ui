@@ -1,6 +1,6 @@
 {
   "name": "@markdown2ui/react",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "React renderer for markdown2ui v0.9",
   "type": "module",
   "main": "./dist/index.cjs",

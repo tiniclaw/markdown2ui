@@ -290,6 +290,21 @@ activities: What interests you?
 
 **Rendering:** When any option in a group has an image, the renderer switches from the default layout (chips, radio buttons, checkboxes) to a card grid. Images within the same group are rendered at a consistent size using a fixed aspect ratio (e.g., 4:3) with `object-fit: cover` (or platform equivalent).
 
+#### Option Label : Description
+
+Option text may contain a colon (`:`) to separate a **label** from a **description**:
+
+```
+plan: Choose a plan
+- Pro: Best for professionals
+- Team: Collaborate with your team
+- Enterprise: Custom solutions for large orgs
+```
+
+**Parsing:** The colon is not parsed specially — the full text (e.g., `Pro: Best for professionals`) remains the option's `text` field and is used as-is for form submission.
+
+**Rendering:** This is a renderer-side convention. When an option's text contains a colon, the renderer **bolds** the portion before the first colon and renders the portion after in normal weight. If no colon is present, the entire text renders normally. This is optional — renderers may choose not to apply this styling.
+
 ---
 
 ### 3. Sequence (Reorderable List)

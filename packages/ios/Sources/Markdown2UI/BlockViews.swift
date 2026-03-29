@@ -48,8 +48,7 @@ struct ImageOptionGrid: View {
                                 }
                             }
                         }
-                        Text(option.text)
-                            .font(.subheadline)
+                        OptionIconText(text: option.text, font: .subheadline)
                             .fontWeight(.medium)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 10)
@@ -122,7 +121,7 @@ private struct GroupedSelectRow: View {
     var body: some View {
         Button(action: action) {
             HStack {
-                IconText(text: text)
+                OptionIconText(text: text)
                     .foregroundStyle(.primary)
                 Spacer()
                 if isSelected {
@@ -344,7 +343,7 @@ struct MultiSelectView: View {
                 VStack(spacing: 0) {
                     ForEach(block.options, id: \.text) { option in
                         HStack {
-                            IconText(text: option.text)
+                            OptionIconText(text: option.text)
                             Spacer()
                             Toggle("", isOn: Binding(
                                 get: { isSelected(option.text) },

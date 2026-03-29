@@ -12,7 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 
 // Material icon name → android.R.drawable resource mapping
@@ -117,5 +121,57 @@ fun IconText(
         }
     } else {
         Text(text = parts.text, style = style, modifier = modifier)
+    }
+}
+
+/**
+ * Renders option text with label:description formatting.
+ * Text before the first colon is bolded; text after is normal weight.
+ */
+@Composable
+fun OptionIconText(
+    text: String,
+    modifier: Modifier = Modifier,
+    style: TextStyle = LocalTextStyle.current,
+) {
+    val parts = extractIconParts(text)
+    val colonIdx = parts.text.indexOf(':')
+
+    @Composable
+    fun StyledText() {
+        if (colonIdx >= 0) {
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(parts.text.substring(0, colonIdx))
+                    }
+                    append(parts.text.substring(colonIdx))
+                },
+                style = style,
+            )
+        } else {
+            Text(text = parts.text, style = style)
+        }
+    }
+
+    if (parts.drawableRes != null) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
+            Icon(
+                painter = painterResource(parts.drawableRes),
+                contentDescription = parts.iconName,
+                modifier = Modifier.size(18.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            StyledText()
+        }
+    } else if (parts.emojiFallbackChar != null) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
+            Text(text = parts.emojiFallbackChar, style = style)
+            Spacer(modifier = Modifier.width(4.dp))
+            StyledText()
+        }
+    } else {
+        StyledText()
     }
 }

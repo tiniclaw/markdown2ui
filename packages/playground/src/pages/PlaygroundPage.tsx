@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { specExamples, iconExample, imageOptionExample } from '../data/examples';
+import { specExamples, iconExample, imageOptionExample, labelDescriptionExample } from '../data/examples';
 import { ExampleCard } from '../components/ExampleCard';
 import { LivePlayground } from '../components/LivePlayground';
 
@@ -10,7 +10,7 @@ export function PlaygroundPage() {
     sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  const allExamples = [...specExamples, iconExample, imageOptionExample];
+  const allExamples = [...specExamples, iconExample, imageOptionExample, labelDescriptionExample];
 
   return (
     <div className="pg-page">

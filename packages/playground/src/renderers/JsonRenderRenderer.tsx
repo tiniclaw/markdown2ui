@@ -9,7 +9,7 @@ import type { AST, Block } from '@markdown2ui/parser';
 import type { RendererProps } from './types';
 import { serializeValues } from './serialize';
 import { formatDisplayValue } from './formatValue';
-import { IconText } from './IconText';
+import { IconText, OptionIconText } from './IconText';
 import { processIconTextSimple } from './icons';
 
 interface UIElement {
@@ -223,7 +223,7 @@ function ElementRenderer({ id, spec, state, setState, onSubmit }: {
               <button key={o.text} className={`jr-image-card${val === o.text ? ' jr-image-card--selected' : ''}`}
                 onClick={() => setState(p.name, o.text)}>
                 {o.image && <img src={o.image} alt={o.text} className="jr-image-card-img" />}
-                <span className="jr-image-card-label"><IconText text={o.text} /></span>
+                <span className="jr-image-card-label"><OptionIconText text={o.text} /></span>
               </button>
             ))}
           </div>
@@ -245,7 +245,7 @@ function ElementRenderer({ id, spec, state, setState, onSubmit }: {
                 {o.image && <img src={o.image} alt={o.text} className="jr-image-card-img" />}
                 <span className="jr-image-card-label">
                   {checked.includes(o.text) && <span>&#10003; </span>}
-                  <IconText text={o.text} />
+                  <OptionIconText text={o.text} />
                 </span>
               </button>
             ))}
@@ -264,7 +264,7 @@ function ElementRenderer({ id, spec, state, setState, onSubmit }: {
                 const next = checked.includes(o.text) ? checked.filter((s: string) => s !== o.text) : [...checked, o.text];
                 setState(p.name, next);
               }} />
-              <span><IconText text={o.text} /></span>
+              <span><OptionIconText text={o.text} /></span>
             </label>
           ))}
         </div>

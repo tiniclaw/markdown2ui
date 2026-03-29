@@ -1,6 +1,12 @@
 import { useFormContext } from '../context.js';
 import type { SingleSelectBlock } from '@markdown2ui/parser';
 
+function OptionText({ text }: { text: string }) {
+  const idx = text.indexOf(':');
+  if (idx < 0) return <>{text}</>;
+  return <><strong>{text.slice(0, idx)}</strong>:{text.slice(idx + 1)}</>;
+}
+
 export function SingleSelect({ block }: { block: SingleSelectBlock }) {
   const { values, setValue } = useFormContext();
   const selected = values[block.id!] as string | undefined;
@@ -32,7 +38,7 @@ export function SingleSelect({ block }: { block: SingleSelectBlock }) {
                 }}
               />
               {opt.image && <img className="m2u-image-card-img" src={opt.image} alt={opt.text} />}
-              <span className="m2u-image-card-text">{opt.text}</span>
+              <span className="m2u-image-card-text"><OptionText text={opt.text} /></span>
             </label>
           ))}
         </div>
@@ -50,7 +56,7 @@ export function SingleSelect({ block }: { block: SingleSelectBlock }) {
                   setValue(`${block.id!}__freestyle`, '');
                 }}
               />
-              <span>{opt.text}</span>
+              <span><OptionText text={opt.text} /></span>
             </label>
           ))}
         </div>

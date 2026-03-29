@@ -225,7 +225,7 @@ private fun SingleSelectRenderer(block: Block.SingleSelect, formState: FormState
                                     count = block.options.size,
                                 ),
                             ) {
-                                IconText(text = option.text)
+                                OptionIconText(text = option.text)
                             }
                         }
                     }
@@ -249,7 +249,7 @@ private fun SingleSelectRenderer(block: Block.SingleSelect, formState: FormState
                                     )
                                     .padding(horizontal = 16.dp, vertical = 10.dp),
                             ) {
-                                IconText(
+                                OptionIconText(
                                     text = option.text,
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         color = if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer
@@ -313,7 +313,7 @@ private fun MultiSelectRenderer(block: Block.MultiSelect, formState: FormState, 
                             val newList = if (isSelected) selected - option.text else selected + option.text
                             formState.setValue(blockId, newList)
                         },
-                        label = { IconText(text = option.text) },
+                        label = { OptionIconText(text = option.text) },
                     )
                 }
             }

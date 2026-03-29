@@ -94,3 +94,31 @@ struct IconText: View {
         }
     }
 }
+
+/// Renders option text with label:description formatting.
+/// Text before the first colon is bolded; text after is normal weight.
+@available(iOS 16.0, macOS 13.0, *)
+struct OptionIconText: View {
+    let text: String
+    var font: Font = .body
+
+    var body: some View {
+        let parts = extractIcon(from: text)
+        HStack(spacing: 4) {
+            if let symbol = parts.sfSymbol {
+                Image(systemName: symbol)
+                    .font(font)
+                    .foregroundStyle(.secondary)
+            } else if parts.iconName != nil {
+                // Unresolved icon name — show nothing (graceful fallback)
+            }
+            if let idx = parts.text.firstIndex(of: ":") {
+                Text(parts.text[parts.text.startIndex..<idx]).bold() +
+                Text(parts.text[idx...])
+            } else {
+                Text(parts.text)
+            }
+        }
+        .font(font)
+    }
+}

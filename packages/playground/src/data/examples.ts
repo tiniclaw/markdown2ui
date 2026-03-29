@@ -228,6 +228,22 @@ Rating
 ?! :delete: Remove account? ? :check: Yes, remove : :close: No, keep`,
 };
 
+export const labelDescriptionExample: SpecExample = {
+  id: 'label-description',
+  title: 'Option Label : Description',
+  description: 'Use a colon in option text to separate a bold label from a normal-weight description. The renderer bolds text before the first `:`.',
+  markup: `plan: Choose a plan
+- Pro: Best for professionals
+- Team: Collaborate with your team
+- Enterprise: Custom solutions for large orgs
+
+features: What do you need?
+- [x] Storage: 100 GB cloud storage included
+- [ ] Analytics: Real-time usage dashboards
+- [ ] SSO: Single sign-on for your organization
+- [ ] Support: Priority 24/7 support`,
+};
+
 export const imageOptionExample: SpecExample = {
   id: 'image-options',
   title: 'Image Options',
