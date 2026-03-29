@@ -1,25 +1,69 @@
 name: Publish to npm
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: [main]
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     environment: npm
     permissions:
-      contents: read
+      contents: write
       id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      # Determine version bump type from merge commit message
+      - name: Determine version bump
+        id: bump
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          if echo "$COMMIT_MSG" | grep -qi '\[major\]'; then
+            echo "type=major" >> "$GITHUB_OUTPUT"
+          elif echo "$COMMIT_MSG" | grep -qi '\[minor\]'; then
+            echo "type=minor" >> "$GITHUB_OUTPUT"
+          else
+            echo "type=patch" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Bump version in parser
+      - name: Bump parser version
+        working-directory: packages/parser
+        run: npm version ${{ steps.bump.outputs.type }} --no-git-tag-version
+
+      # Sync version to react
+      - name: Bump react version
+        working-directory: packages/react
+        run: npm version ${{ steps.bump.outputs.type }} --no-git-tag-version
+
+      # Read the new version for tagging
+      - name: Get new version
+        id: version
+        run: echo "version=$(node -p "require('./packages/parser/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      # Commit version bump and tag
+      - name: Commit version bump
+        run: |
+          git add packages/parser/package.json packages/react/package.json
+          git commit -m "v${{ steps.version.outputs.version }}"
+          git tag "v${{ steps.version.outputs.version }}"
+          git push origin main --tags
 
       # Build and publish parser first (react depends on it)
       - name: Install parser dependencies
