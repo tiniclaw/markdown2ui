@@ -78,7 +78,7 @@ jobs:
       - name: Publish parser
         if: steps.check.outputs.skip == 'false'
         working-directory: packages/parser
-        run: npm publish --access public --provenance
+        run: npm publish --provenance --access public
 
       # Fix file: dependency before publishing react
       - name: Prepare react package
@@ -101,9 +101,9 @@ jobs:
       - name: Publish react
         if: steps.check.outputs.skip == 'false'
         working-directory: packages/react
-        run: npm publish --access public --provenance
+        run: npm publish --provenance --access public
 
-      # Create a GitHub Release with the version tag (no push to protected branch)
+      # Create a GitHub Release with the version tag
       - name: Create GitHub Release
         if: steps.check.outputs.skip == 'false'
         env:
