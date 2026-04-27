@@ -1,0 +1,6 @@
+{
+  "defaults": {
+    "confirmationYesLabel": "Oui",
+    "confirmationNoLabel": "Non"
+  }
+}

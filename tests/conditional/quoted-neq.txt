@@ -1,0 +1,2 @@
+> city: City
+> note: Non-NYC note @if:city!="New York City"

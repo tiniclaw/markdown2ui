@@ -1,0 +1,14 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "custom",
+      "customType": "stars",
+      "payload": {
+        "label": "Stars",
+        "max": 5
+      },
+      "id": "stars"
+    }
+  ]
+}

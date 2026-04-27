@@ -1,7 +1,8 @@
 import { describe, test, expect } from 'vitest';
 import { parse } from '../src/index.js';
+import type { ParseOptions } from '../src/index.js';
 import { readdirSync, readFileSync, existsSync } from 'fs';
-import { join, resolve, relative } from 'path';
+import { join, resolve } from 'path';
 
 const TESTS_DIR = resolve(__dirname, '../../../tests');
 
@@ -9,6 +10,7 @@ interface TestCase {
   name: string;
   input: string;
   expected: object;
+  options?: ParseOptions;
 }
 
 function discoverTests(baseDir: string): TestCase[] {
@@ -30,11 +32,13 @@ function discoverTests(baseDir: string): TestCase[] {
       const input = readFileSync(join(dirPath, file), 'utf-8');
       const expected = JSON.parse(readFileSync(astFile, 'utf-8'));
 
-      cases.push({
-        name: `${dir}/${baseName}`,
-        input,
-        expected,
-      });
+      // Optional per-test ParseOptions sidecar
+      const optionsFile = join(dirPath, `${baseName}.options.json`);
+      const options: ParseOptions | undefined = existsSync(optionsFile)
+        ? JSON.parse(readFileSync(optionsFile, 'utf-8'))
+        : undefined;
+
+      cases.push({ name: `${dir}/${baseName}`, input, expected, options });
     }
   }
 
@@ -61,8 +65,8 @@ function replaceNowPlaceholders(obj: any): any {
 const testCases = discoverTests(TESTS_DIR);
 
 describe('markdown2ui parser conformance', () => {
-  test.each(testCases)('$name', ({ input, expected }) => {
-    const result = parse(input);
+  test.each(testCases)('$name', ({ input, expected, options }) => {
+    const result = parse(input, options);
     const normalizedExpected = replaceNowPlaceholders(expected);
     expect(result).toEqual(normalizedExpected);
   });

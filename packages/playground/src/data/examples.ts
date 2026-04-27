@@ -138,6 +138,96 @@ Requirements!
 - [ ] Newsletter`,
   },
   {
+    id: 'conditional',
+    title: 'Conditional Visibility (@if)',
+    description: 'Append `@if:fieldId==value` or `@if:fieldId!=value` to any block. The block is hidden or shown based on the current value of another field. Quoted values (`"..."`) support spaces.',
+    markup: `country: Country
+- US
+- CA
+- Other
+
+> state: State / Province @if:country==US
+
+> province: Province @if:country==CA
+
+>> other_country: Please specify your country @if:country==Other`,
+  },
+  {
+    id: 'repeatable-group',
+    title: 'Repeatable Groups (@repeatable)',
+    description: 'Add `@repeatable` to a group to let users add / remove rows. Use `@min(N)` and `@max(N)` to set row limits.',
+    markup: `{ passengers @repeatable @min(1) @max(5)
+> name: Passenger name
+@date dob: Date of birth
+}
+
+{ luggage @repeatable @max(3)
+> description: Luggage description
+~ weight: Weight kg [0 - 32] (10)
+}`,
+  },
+  {
+    id: 'table-input',
+    title: 'Table Input ([table])',
+    description: 'Define a multi-row, multi-column editable grid. Column types are `[text]` or `[number]` with optional format annotations.',
+    markup: `[table: Line Items]
+- Product: [text]
+- Qty: [number]
+- Unit price: [number @currency(USD)]
+
+[table: Survey Scores]
+- Category: [text]
+- Score: [number @integer]
+- Notes: [text]`,
+  },
+  {
+    id: 'computed-fields',
+    title: 'Computed Fields ([computed])',
+    description: 'Read-only fields that update reactively. `@sum:f1,f2` sums numeric fields or repeatable group rows; `@count:groupId` counts rows.',
+    markup: `~ price: Unit price [1 - 500] (10) @currency(USD)
+~ qty: Quantity [1 - 100] (2)
+
+[computed total: Total @sum:price,qty @currency(USD)]
+
+---
+
+{ items @repeatable @min(1) @max(10)
+> item: Item name
+}
+
+[computed item_count: Item count @count:items]`,
+  },
+  {
+    id: 'custom-block',
+    title: 'Plugin Blocks ([custom:])',
+    description: 'Embed custom block types via the `[custom:type key=value ...]` syntax. The React renderer resolves them via the `blockRenderers` prop. In this playground no renderer is registered, so the block is silently skipped.',
+    markup: `# Contact Form
+
+> name: Your name
+
+[custom:alert level=info text="Fill in your details above"]
+
+@email email: Email address
+
+[custom:recaptcha site_key=demo_key theme=light]
+
+?! submit: Send message?`,
+  },
+  {
+    id: 'localization',
+    title: 'Localization (strings + ParseOptions)',
+    description: 'Pass `strings` prop to `<Markdown2UI>` to override any UI string. Confirmation defaults come from `ParseOptions.defaults` at parse time.',
+    markup: `# 문의 양식
+
+>! name: 이름
+
+>! email: 이메일 주소
+
+>>! message: 문의 내용
+
+?! 제출하시겠습니까?`,
+  },
+  {
     id: 'composite',
     title: 'Full Form Example',
     description: 'A realistic multi-block form combining all features.',

@@ -1,0 +1,3 @@
+[table: Budget]
+- Category: [text]
+- Cost: [number @currency(USD)]

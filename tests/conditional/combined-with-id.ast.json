@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "text-input",
+      "id": "addr",
+      "label": "Mailing address",
+      "multiline": false,
+      "condition": {
+        "fieldId": "country",
+        "op": "==",
+        "value": "US"
+      }
+    }
+  ]
+}

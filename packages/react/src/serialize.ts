@@ -1,11 +1,19 @@
-import type { Block, AST } from '@markdown2ui/parser';
+import type { Block, AST, ComputedExpression } from '@markdown2ui/parser';
 import type { FormValues } from './context.js';
+import { isBlockVisible } from './components/Markdown2UI.js';
 
-function flattenBlocks(blocks: Block[]): Block[] {
+function flattenBlocks(blocks: Block[], values: FormValues): Block[] {
   const result: Block[] = [];
   for (const block of blocks) {
+    if (!isBlockVisible(block, values)) continue;
+
     if (block.type === 'group') {
-      result.push(...flattenBlocks(block.children));
+      if (block.repeatable) {
+        // Repeatable groups are handled separately in serializers
+        result.push(block);
+      } else {
+        result.push(...flattenBlocks(block.children, values));
+      }
     } else {
       result.push(block);
     }
@@ -26,15 +34,72 @@ const INTERACTIVE_TYPES = new Set([
   'datetime',
   'file-upload',
   'image-upload',
+  'table',
 ]);
+
+function evaluateComputed(expression: ComputedExpression, values: FormValues): number {
+  if (expression.type === 'count') {
+    return expression.fields.reduce((total, fieldId) => {
+      const v = values[fieldId];
+      if (Array.isArray(v)) return total + v.length;
+      return total + (v != null && v !== '' ? 1 : 0);
+    }, 0);
+  }
+
+  const nums = expression.fields.flatMap((fieldId) => {
+    const v = values[fieldId];
+    if (Array.isArray(v)) {
+      return v.flatMap((item: any) => {
+        if (typeof item === 'object') {
+          return Object.values(item)
+            .map((x) => parseFloat(String(x)))
+            .filter((n) => !isNaN(n));
+        }
+        const n = parseFloat(String(item));
+        return isNaN(n) ? [] : [n];
+      });
+    }
+    const n = parseFloat(String(v ?? ''));
+    return isNaN(n) ? [] : [n];
+  });
+
+  return nums.reduce((a, b) => a + b, 0);
+}
 
 export function serializeCompact(ast: AST, values: FormValues): string {
   const entries: string[] = [];
 
-  for (const block of flattenBlocks(ast.blocks)) {
+  for (const block of flattenBlocks(ast.blocks, values)) {
+    // Computed fields excluded from compact output
+    if (block.type === 'computed') continue;
+
+    if (block.type === 'group' && (block as any).repeatable) {
+      const groupId = (block as any).id ?? (block as any).name;
+      if (!groupId) continue;
+      const rows = (values[groupId] as Array<Record<string, any>>) ?? [];
+      rows.forEach((row, rowIndex) => {
+        for (const child of (block as any).children) {
+          const childId = child.id;
+          if (!childId || !INTERACTIVE_TYPES.has(child.type)) continue;
+          entries.push(`[${groupId}[${rowIndex}].${childId}] ${row[childId] ?? 'null'}`);
+        }
+      });
+      continue;
+    }
+
     if (!INTERACTIVE_TYPES.has(block.type)) continue;
     const id = (block as any).id;
     if (!id) continue;
+
+    if (block.type === 'table') {
+      const rows = (values[id] as Array<Record<string, string>>) ?? [];
+      rows.forEach((row, rowIndex) => {
+        for (const col of (block as any).columns ?? []) {
+          entries.push(`[${id}[${rowIndex}].${col.id}] ${row[col.id] ?? 'null'}`);
+        }
+      });
+      continue;
+    }
 
     const value = values[id];
     let formatted: string;
@@ -81,11 +146,46 @@ export function serializeCompact(ast: AST, values: FormValues): string {
 export function serializeVerbose(ast: AST, values: FormValues): Record<string, any> {
   const result: Record<string, any> = {};
 
-  for (const block of flattenBlocks(ast.blocks)) {
+  for (const block of flattenBlocks(ast.blocks, values)) {
+    if (block.type === 'group' && (block as any).repeatable) {
+      const groupId = (block as any).id ?? (block as any).name;
+      if (!groupId) continue;
+      const rows = (values[groupId] as Array<Record<string, any>>) ?? [];
+      result[groupId] = {
+        type: 'group',
+        repeatable: true,
+        rows,
+      };
+      continue;
+    }
+
+    if (block.type === 'computed') {
+      const b = block as any;
+      if (!b.id) continue;
+      result[b.id] = {
+        type: 'computed',
+        label: b.label,
+        computed: true,
+        value: evaluateComputed(b.expression, values),
+      };
+      continue;
+    }
+
     if (!INTERACTIVE_TYPES.has(block.type)) continue;
     const b = block as any;
     const id = b.id;
     if (!id) continue;
+
+    if (block.type === 'table') {
+      const rows = (values[id] as Array<Record<string, string>>) ?? [];
+      result[id] = {
+        type: 'table',
+        label: b.label,
+        columns: b.columns,
+        rows,
+      };
+      continue;
+    }
 
     const value = values[id];
     const entry: any = {

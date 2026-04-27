@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "table",
+      "columns": [
+        {
+          "id": "name",
+          "label": "Name",
+          "columnType": {
+            "kind": "text"
+          }
+        },
+        {
+          "id": "amount",
+          "label": "Amount",
+          "columnType": {
+            "kind": "number"
+          }
+        }
+      ],
+      "id": "block"
+    }
+  ]
+}

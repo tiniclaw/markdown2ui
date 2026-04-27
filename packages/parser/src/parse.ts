@@ -5,6 +5,10 @@ import type {
   MultiSelectOption,
   FormatAnnotation,
   TypedInputFormat,
+  Condition,
+  ComputedExpression,
+  TableColumnType,
+  TableColumn,
 } from './types.js';
 import { deriveId, resolveCollisions, extractIdFromText } from './id.js';
 import { normalize } from './normalize.js';
@@ -15,7 +19,7 @@ type LineToken =
   | { type: 'divider' }
   | { type: 'header'; level: 1 | 2; text: string }
   | { type: 'hint'; text: string }
-  | { type: 'image-upload'; id?: string; label: string; required: boolean }
+  | { type: 'image-upload'; id?: string; label: string; required: boolean; condition?: Condition }
   | {
       type: 'multi-select-option';
       text: string;
@@ -29,6 +33,7 @@ type LineToken =
       label: string;
       required: boolean;
       extensions?: string[];
+      condition?: Condition;
     }
   | {
       type: 'text-input';
@@ -38,13 +43,15 @@ type LineToken =
       required: boolean;
       placeholder?: string;
       prefill?: string;
+      condition?: Condition;
     }
   | {
       type: 'confirmation';
       id?: string;
       label: string;
-      yesLabel: string;
-      noLabel: string;
+      yesLabel?: string;
+      noLabel?: string;
+      condition?: Condition;
     }
   | {
       type: 'typed-input';
@@ -55,6 +62,7 @@ type LineToken =
       placeholder?: string;
       prefill?: string;
       displayFormat?: FormatAnnotation;
+      condition?: Condition;
     }
   | {
       type: 'slider';
@@ -65,6 +73,7 @@ type LineToken =
       default: number;
       step?: number;
       displayFormat?: FormatAnnotation;
+      condition?: Condition;
     }
   | {
       type: 'date' | 'time' | 'datetime';
@@ -72,27 +81,40 @@ type LineToken =
       label: string;
       required: boolean;
       default: string;
+      condition?: Condition;
     }
-  | { type: 'group-start'; name?: string }
+  | { type: 'group-start'; name?: string; repeatable?: true; minRows?: number; maxRows?: number }
   | { type: 'group-end' }
+  | { type: 'sequence-option'; text: string }
+  | { type: 'single-select-option'; text: string; isDefault: boolean; image?: string }
+  | { type: 'label-line'; id?: string; label: string; required: boolean; condition?: Condition }
+  | { type: 'prose'; text: string }
+  | { type: 'blank' }
+  | { type: 'table-start'; id?: string; label?: string; condition?: Condition }
+  | { type: 'table-column'; label: string; columnType: TableColumnType }
   | {
-      type: 'sequence-option';
-      text: string;
-    }
-  | {
-      type: 'single-select-option';
-      text: string;
-      isDefault: boolean;
-      image?: string;
-    }
-  | {
-      type: 'label-line';
+      type: 'computed';
       id?: string;
       label: string;
-      required: boolean;
+      expression: ComputedExpression;
+      displayFormat?: FormatAnnotation;
+      condition?: Condition;
     }
-  | { type: 'prose'; text: string }
-  | { type: 'blank' };
+  | {
+      type: 'custom';
+      id?: string;
+      customType: string;
+      payload: Record<string, unknown>;
+      condition?: Condition;
+    };
+
+// ─── Token types that can carry a condition ──────────────────────────
+
+const CONDITION_BEARER_TYPES = new Set([
+  'image-upload', 'file-upload', 'text-input', 'confirmation', 'typed-input',
+  'slider', 'date', 'time', 'datetime', 'label-line', 'table-start',
+  'computed', 'custom',
+]);
 
 // ─── Helpers ────────────────────────────────────────────────────────
 
@@ -104,6 +126,118 @@ function extractLeadingImage(text: string): { image?: string; text: string } {
     return { image: m[1], text: text.slice(m[0].length) };
   }
   return { text };
+}
+
+// ─── Condition Parser ────────────────────────────────────────────────
+
+function parseCondition(text: string): { rest: string; condition?: Condition } {
+  // Value may be bare (no spaces) or quoted: @if:fieldId=="value with spaces"
+  const m = text.match(/\s+@if:([a-z][a-z0-9_]*)(==|!=)(?:"([^"]*)"|([\S]+))\s*$/);
+  if (!m) return { rest: text };
+  const rest = text.slice(0, m.index!);
+  return {
+    rest,
+    condition: { fieldId: m[1], op: m[2] as '==' | '!=', value: m[3] !== undefined ? m[3] : m[4] },
+  };
+}
+
+// ─── Format Annotation Parser ───────────────────────────────────────
+
+function parseFormatAnnotation(text: string): { rest: string; format?: FormatAnnotation } {
+  // @currency(CODE)
+  const currencyMatch = text.match(/\s+@currency\(([A-Za-z]{3})\)\s*$/);
+  if (currencyMatch) {
+    return {
+      rest: text.slice(0, currencyMatch.index!),
+      format: { type: 'currency', code: currencyMatch[1].toUpperCase() },
+    };
+  }
+
+  // @unit(UNIT) or @unit(singular|plural)
+  const unitMatch = text.match(/\s+@unit\(([^)]+)\)\s*$/);
+  if (unitMatch) {
+    const parts = unitMatch[1].split('|');
+    const format: FormatAnnotation = { type: 'unit', unit: parts[0], ...(parts[1] ? { plural: parts[1] } : {}) };
+    return { rest: text.slice(0, unitMatch.index!), format };
+  }
+
+  // @percent
+  const percentMatch = text.match(/\s+@percent\s*$/);
+  if (percentMatch) {
+    return { rest: text.slice(0, percentMatch.index!), format: { type: 'percent' } };
+  }
+
+  // @integer
+  const intMatch = text.match(/\s+@integer\s*$/);
+  if (intMatch) {
+    return { rest: text.slice(0, intMatch.index!), format: { type: 'integer' } };
+  }
+
+  // @decimal(N)
+  const decMatch = text.match(/\s+@decimal\((\d+)\)\s*$/);
+  if (decMatch) {
+    return {
+      rest: text.slice(0, decMatch.index!),
+      format: { type: 'decimal', places: parseInt(decMatch[1], 10) },
+    };
+  }
+
+  return { rest: text };
+}
+
+// ─── Column Type Parser ─────────────────────────────────────────────
+
+function parseColumnType(spec: string): TableColumnType | null {
+  if (spec === 'text') return { kind: 'text' };
+
+  if (spec.startsWith('number')) {
+    const rest = spec.slice('number'.length).trim();
+    if (!rest) return { kind: 'number' };
+    const formatParsed = parseFormatAnnotation(' ' + rest);
+    if (formatParsed.format) return { kind: 'number', format: formatParsed.format };
+    return null;
+  }
+
+  return null;
+}
+
+// ─── Computed Expression Parser ─────────────────────────────────────
+
+function parseComputedExpression(text: string): { expression: ComputedExpression | null; rest: string } {
+  const sumMatch = text.match(/@sum:([a-z][a-z0-9_,]*)/);
+  if (sumMatch) {
+    const fields = sumMatch[1].split(',').map((f) => f.trim()).filter(Boolean);
+    const rest = (text.slice(0, sumMatch.index!) + text.slice(sumMatch.index! + sumMatch[0].length)).trim();
+    return { expression: { type: 'sum', fields }, rest };
+  }
+
+  const countMatch = text.match(/@count:([a-z][a-z0-9_]*)/);
+  if (countMatch) {
+    const fields = [countMatch[1]];
+    const rest = (text.slice(0, countMatch.index!) + text.slice(countMatch.index! + countMatch[0].length)).trim();
+    return { expression: { type: 'count', fields }, rest };
+  }
+
+  return { expression: null, rest: text };
+}
+
+// ─── Custom Payload Parser ───────────────────────────────────────────
+
+function parseCustomPayload(attrString: string): Record<string, unknown> {
+  const payload: Record<string, unknown> = {};
+  const pattern = /([a-zA-Z][a-zA-Z0-9_]*)=(?:"([^"]*)"|(\S+))/g;
+  let match;
+  while ((match = pattern.exec(attrString)) !== null) {
+    const key = match[1];
+    const rawValue = match[2] !== undefined ? match[2] : match[3];
+    if (rawValue === 'true') payload[key] = true;
+    else if (rawValue === 'false') payload[key] = false;
+    else {
+      const num = Number(rawValue);
+      payload[key] = !isNaN(num) && rawValue !== '' ? num : rawValue;
+    }
+  }
+  return payload;
 }
 
 // ─── Matchers (Priority Order) ──────────────────────────────────────
@@ -129,6 +263,71 @@ function matchHint(line: string): LineToken | null {
   return null;
 }
 
+function matchTableStart(line: string): LineToken | null {
+  const m = line.match(/^\[table(?::\s*(.+))?\]$/i);
+  if (!m) return null;
+
+  if (!m[1]) return { type: 'table-start' };
+
+  let inner = m[1].trim();
+  let id: string | undefined;
+
+  const idMatch = inner.match(/^([a-z][a-z0-9_]*):\s+(.+)$/);
+  if (idMatch) {
+    id = idMatch[1];
+    inner = idMatch[2];
+  }
+
+  return { type: 'table-start', id, label: inner };
+}
+
+function matchComputed(line: string): LineToken | null {
+  const m = line.match(/^\[computed\s+(.+)\]$/i);
+  if (!m) return null;
+
+  let rest = m[1].trim();
+
+  let id: string | undefined;
+  const idMatch = rest.match(/^([a-z][a-z0-9_]*):\s+(.+)$/);
+  if (idMatch) {
+    id = idMatch[1];
+    rest = idMatch[2];
+  }
+
+  const formatParsed = parseFormatAnnotation(rest);
+  rest = formatParsed.rest.trim();
+
+  const { expression, rest: afterExpr } = parseComputedExpression(rest);
+  if (!expression) return null;
+
+  const label = afterExpr.trim();
+  if (!label) return null;
+
+  return {
+    type: 'computed',
+    id,
+    label,
+    expression,
+    displayFormat: formatParsed.format,
+  };
+}
+
+function matchCustom(line: string): LineToken | null {
+  const m = line.match(/^\[custom:([a-zA-Z][a-zA-Z0-9_-]*)((?:\s+[a-zA-Z][a-zA-Z0-9_]*=(?:"[^"]*"|\S+))*)\]$/);
+  if (!m) return null;
+
+  const customType = m[1];
+  const payload = parseCustomPayload(m[2] || '');
+
+  let id: string | undefined;
+  if (typeof payload['id'] === 'string') {
+    id = payload['id'] as string;
+    delete payload['id'];
+  }
+
+  return { type: 'custom', id, customType, payload };
+}
+
 function matchImageUpload(line: string): LineToken | null {
   const m = line.match(/^!\[(.+)\]\(\)$/);
   if (!m) return null;
@@ -137,13 +336,11 @@ function matchImageUpload(line: string): LineToken | null {
   let id: string | undefined;
   let required = false;
 
-  // Check for ![! label]()
   if (inner.startsWith('! ')) {
     required = true;
     inner = inner.slice(2);
   }
 
-  // Check for ![id!: label]() or ![id: label]()
   const idMatch = inner.match(/^([a-z][a-z0-9_]*)(!)?\s*:\s+(.+)$/);
   if (idMatch) {
     id = idMatch[1];
@@ -167,28 +364,37 @@ function matchMultiSelectOption(line: string): LineToken | null {
   };
 }
 
+function matchTableColumn(line: string): LineToken | null {
+  const m = line.match(/^-\s+(.+?):\s+\[(.+)\]$/);
+  if (!m) return null;
+
+  const label = m[1].trim();
+  const spec = m[2].trim();
+  const columnType = parseColumnType(spec);
+  if (!columnType) return null;
+
+  return { type: 'table-column', label, columnType };
+}
+
 function matchFileUpload(line: string): LineToken | null {
   const m = line.match(/^\[(.+)\]\(([^)]*)\)$/);
   if (!m) return null;
 
   const parens = m[2].trim();
 
-  // Parens must be empty or contain only extensions like .csv, .xlsx
   if (parens !== '' && !/^(\.[a-zA-Z0-9]+)(,\s*\.[a-zA-Z0-9]+)*$/.test(parens)) {
-    return null; // real URL — fall through to prose
+    return null;
   }
 
   let inner = m[1];
   let id: string | undefined;
   let required = false;
 
-  // Check for [! label]()
   if (inner.startsWith('! ')) {
     required = true;
     inner = inner.slice(2);
   }
 
-  // Check for [id!: label]() or [id: label]()
   const idMatch = inner.match(/^([a-z][a-z0-9_]*)(!)?\s*:\s+(.+)$/);
   if (idMatch) {
     id = idMatch[1];
@@ -196,15 +402,12 @@ function matchFileUpload(line: string): LineToken | null {
     inner = idMatch[3];
   }
 
-  const extensions = parens
-    ? parens.split(/,\s*/).map((e) => e.trim())
-    : undefined;
+  const extensions = parens ? parens.split(/,\s*/).map((e) => e.trim()) : undefined;
 
   return { type: 'file-upload', id, label: inner, required, extensions };
 }
 
 function matchTextInput(line: string): LineToken | null {
-  // >> before >
   const m = line.match(/^(>>?)(!)?\s+(.+)$/);
   if (!m) return null;
 
@@ -212,7 +415,6 @@ function matchTextInput(line: string): LineToken | null {
   let required = m[2] === '!';
   let rest = m[3];
 
-  // Extract id
   let id: string | undefined;
   const idMatch = rest.match(/^([a-z][a-z0-9_]*)(!)?\s*:\s+(.+)$/);
   if (idMatch) {
@@ -221,7 +423,6 @@ function matchTextInput(line: string): LineToken | null {
     rest = idMatch[3];
   }
 
-  // Extract prefill (||) before placeholder (|)
   let placeholder: string | undefined;
   let prefill: string | undefined;
 
@@ -237,9 +438,7 @@ function matchTextInput(line: string): LineToken | null {
     rest = rest.slice(0, placeholderIdx);
   }
 
-  const label = rest.trim();
-
-  return { type: 'text-input', multiline, id, label, required, placeholder, prefill };
+  return { type: 'text-input', multiline, id, label: rest.trim(), required, placeholder, prefill };
 }
 
 function matchConfirmation(line: string): LineToken | null {
@@ -249,14 +448,12 @@ function matchConfirmation(line: string): LineToken | null {
   let content = m[1];
   let id: string | undefined;
 
-  // Extract id
   const idMatch = content.match(/^([a-z][a-z0-9_]*)(!)?\s*:\s+(.+)$/);
   if (idMatch) {
     id = idMatch[1];
     content = idMatch[3];
   }
 
-  // Look for ternary: question ? yes_label : no_label
   const colonIdx = content.lastIndexOf(' : ');
   if (colonIdx >= 0) {
     const qmarkIdx = content.lastIndexOf(' ? ', colonIdx);
@@ -268,7 +465,8 @@ function matchConfirmation(line: string): LineToken | null {
     }
   }
 
-  return { type: 'confirmation', id, label: content, yesLabel: 'Yes', noLabel: 'No' };
+  // No inline labels — defaults applied in assembler from ParseOptions
+  return { type: 'confirmation', id, label: content };
 }
 
 function matchSlider(line: string): LineToken | null {
@@ -278,19 +476,15 @@ function matchSlider(line: string): LineToken | null {
   let rest = m[1];
   let id: string | undefined;
 
-  // Extract id
   const idMatch = rest.match(/^([a-z][a-z0-9_]*)(!)?\s*:\s+(.+)$/);
   if (idMatch) {
     id = idMatch[1];
     rest = idMatch[3];
   }
 
-  // Extract format annotation from end before parsing slider syntax
   const formatParsed = parseFormatAnnotation(rest);
   rest = formatParsed.rest;
 
-  // Parse: Label [min - max] (default) %step
-  // Supports both integers and decimals
   const NUM = '\\d+(?:\\.\\d+)?';
   const sliderMatch = rest.match(
     new RegExp(`^(.+?)\\s*\\[(${NUM})\\s*-\\s*(${NUM})\\]\\s*\\((${NUM})\\)(?:\\s*%(${NUM}))?$`)
@@ -308,47 +502,6 @@ function matchSlider(line: string): LineToken | null {
     displayFormat: formatParsed.format,
   };
 }
-
-// ─── Format Annotation Parser ───────────────────────────────────────
-
-function parseFormatAnnotation(text: string): { rest: string; format?: FormatAnnotation } {
-  // @currency(CODE)
-  const currencyMatch = text.match(/\s+@currency\(([A-Za-z]{3})\)\s*$/);
-  if (currencyMatch) {
-    return { rest: text.slice(0, currencyMatch.index!), format: { type: 'currency', code: currencyMatch[1].toUpperCase() } };
-  }
-
-  // @unit(UNIT) or @unit(singular|plural)
-  const unitMatch = text.match(/\s+@unit\(([^)]+)\)\s*$/);
-  if (unitMatch) {
-    const parts = unitMatch[1].split('|');
-    const format: any = { type: 'unit', unit: parts[0] };
-    if (parts.length > 1) format.plural = parts[1];
-    return { rest: text.slice(0, unitMatch.index!), format };
-  }
-
-  // @percent
-  const percentMatch = text.match(/\s+@percent\s*$/);
-  if (percentMatch) {
-    return { rest: text.slice(0, percentMatch.index!), format: { type: 'percent' } };
-  }
-
-  // @integer
-  const intMatch = text.match(/\s+@integer\s*$/);
-  if (intMatch) {
-    return { rest: text.slice(0, intMatch.index!), format: { type: 'integer' } };
-  }
-
-  // @decimal(N)
-  const decMatch = text.match(/\s+@decimal\((\d+)\)\s*$/);
-  if (decMatch) {
-    return { rest: text.slice(0, decMatch.index!), format: { type: 'decimal', places: parseInt(decMatch[1], 10) } };
-  }
-
-  return { rest: text };
-}
-
-// ─── Typed Input Matcher ────────────────────────────────────────────
 
 const TYPED_INPUT_FORMATS = new Set(['email', 'tel', 'url', 'number', 'password', 'color']);
 
@@ -368,7 +521,6 @@ function matchTypedInput(line: string): LineToken | null {
     rest = idMatch[3];
   }
 
-  // Extract format annotation (for @number)
   let displayFormat: FormatAnnotation | undefined;
   if (inputFormat === 'number') {
     const parsed = parseFormatAnnotation(rest);
@@ -376,7 +528,6 @@ function matchTypedInput(line: string): LineToken | null {
     displayFormat = parsed.format;
   }
 
-  // Extract prefill (||) before placeholder (|)
   let placeholder: string | undefined;
   let prefill: string | undefined;
 
@@ -405,7 +556,6 @@ function matchTypedInput(line: string): LineToken | null {
 }
 
 function matchTemporal(line: string): LineToken | null {
-  // @datetime before @date and @time
   const m = line.match(/^@(datetime|date|time)(!)?\s+(.+)$/);
   if (!m) return null;
 
@@ -421,7 +571,6 @@ function matchTemporal(line: string): LineToken | null {
     rest = idMatch[3];
   }
 
-  // Extract default value after |
   let defaultValue = 'NOW';
   const pipeIdx = rest.indexOf(' | ');
   if (pipeIdx !== -1) {
@@ -429,20 +578,43 @@ function matchTemporal(line: string): LineToken | null {
     rest = rest.slice(0, pipeIdx);
   }
 
-  return {
-    type: temporalType,
-    id,
-    label: rest.trim(),
-    required,
-    default: defaultValue,
-  };
+  return { type: temporalType, id, label: rest.trim(), required, default: defaultValue };
 }
 
 function matchGroupStart(line: string): LineToken | null {
   const m = line.match(/^\{\s*(.*)$/);
   if (!m) return null;
-  const name = m[1].trim() || undefined;
-  return { type: 'group-start', name };
+
+  let nameStr = m[1].trim();
+  let repeatable: true | undefined;
+  let minRows: number | undefined;
+  let maxRows: number | undefined;
+
+  const maxMatch = nameStr.match(/\s*@max\((\d+)\)\s*/);
+  if (maxMatch) {
+    maxRows = parseInt(maxMatch[1], 10);
+    nameStr = nameStr.replace(maxMatch[0], ' ').trim();
+  }
+
+  const minMatch = nameStr.match(/\s*@min\((\d+)\)\s*/);
+  if (minMatch) {
+    minRows = parseInt(minMatch[1], 10);
+    nameStr = nameStr.replace(minMatch[0], ' ').trim();
+  }
+
+  const repMatch = nameStr.match(/\s*@repeatable\s*/);
+  if (repMatch) {
+    repeatable = true;
+    nameStr = nameStr.replace(repMatch[0], ' ').trim();
+  }
+
+  return {
+    type: 'group-start',
+    name: nameStr || undefined,
+    repeatable,
+    minRows,
+    maxRows,
+  };
 }
 
 function matchGroupEnd(line: string): LineToken | null {
@@ -472,13 +644,9 @@ function matchSingleSelectOption(line: string): LineToken | null {
   return { type: 'single-select-option', text: cleanText, isDefault, image };
 }
 
-function matchLabelLine(
-  line: string,
-  nextLine: string | null
-): LineToken | null {
+function matchLabelLine(line: string, nextLine: string | null): LineToken | null {
   if (nextLine === null) return null;
 
-  // Check if next line starts a select/sequence group
   const isNextSelect =
     /^-\s+/.test(nextLine) || /^- \[(x| )\]\s+/.test(nextLine) || /^\d+\.\s+/.test(nextLine);
 
@@ -496,25 +664,36 @@ function matchLabelLine(
 // ─── Tokenizer ──────────────────────────────────────────────────────
 
 function classifyLine(line: string, nextLine: string | null): LineToken {
-  // Priority-ordered matching
-  return (
-    matchDivider(line) ??
-    matchHeader(line) ??
-    matchHint(line) ??
-    matchImageUpload(line) ??
-    matchMultiSelectOption(line) ??
-    matchFileUpload(line) ??
-    matchTextInput(line) ??
-    matchConfirmation(line) ??
-    matchSlider(line) ??
-    matchTypedInput(line) ??
-    matchTemporal(line) ??
-    matchGroupStart(line) ??
-    matchGroupEnd(line) ??
-    matchSequenceOption(line) ??
-    matchSingleSelectOption(line) ??
-    matchLabelLine(line, nextLine) ?? { type: 'prose', text: line }
-  );
+  // Strip @if condition before classification
+  const { rest: lineForClassify, condition } = parseCondition(line);
+
+  const token =
+    matchDivider(lineForClassify) ??
+    matchHeader(lineForClassify) ??
+    matchHint(lineForClassify) ??
+    matchTableStart(lineForClassify) ??
+    matchComputed(lineForClassify) ??
+    matchCustom(lineForClassify) ??
+    matchImageUpload(lineForClassify) ??
+    matchMultiSelectOption(lineForClassify) ??
+    matchTableColumn(lineForClassify) ??
+    matchFileUpload(lineForClassify) ??
+    matchTextInput(lineForClassify) ??
+    matchConfirmation(lineForClassify) ??
+    matchSlider(lineForClassify) ??
+    matchTypedInput(lineForClassify) ??
+    matchTemporal(lineForClassify) ??
+    matchGroupStart(lineForClassify) ??
+    matchGroupEnd(lineForClassify) ??
+    matchSequenceOption(lineForClassify) ??
+    matchSingleSelectOption(lineForClassify) ??
+    matchLabelLine(lineForClassify, nextLine) ?? { type: 'prose', text: lineForClassify };
+
+  if (condition && CONDITION_BEARER_TYPES.has(token.type)) {
+    (token as any).condition = condition;
+  }
+
+  return token;
 }
 
 function tokenize(input: string): LineToken[] {
@@ -531,14 +710,12 @@ function tokenize(input: string): LineToken[] {
 
     const trimmed = line.trim();
 
-    // Handle escaped prefixes
     if (trimmed.startsWith('\\')) {
       const unescaped = trimmed.slice(1);
       tokens.push({ type: 'prose', text: unescaped });
       continue;
     }
 
-    // Find next non-blank line for lookahead
     let nextLine: string | null = null;
     for (let j = i + 1; j < rawLines.length; j++) {
       const candidate = rawLines[j].trim();
@@ -556,25 +733,28 @@ function tokenize(input: string): LineToken[] {
 
 // ─── Assembler ──────────────────────────────────────────────────────
 
-type InteractiveBlock = Exclude<Block, { type: 'header' | 'hint' | 'divider' | 'prose' | 'group' }>;
+type InteractiveBlock = Exclude<
+  Block,
+  { type: 'header' | 'hint' | 'divider' | 'prose' | 'group' | 'computed' }
+>;
 
 function isInteractive(block: Block): block is InteractiveBlock {
-  return ![
-    'header',
-    'hint',
-    'divider',
-    'prose',
-    'group',
-  ].includes(block.type);
+  return !['header', 'hint', 'divider', 'prose', 'group', 'computed'].includes(block.type);
 }
 
-function assemble(tokens: LineToken[]): Block[] {
+function assemble(tokens: LineToken[], options?: ParseOptions): Block[] {
   const blocks: Block[] = [];
   let i = 0;
 
-  // Pending state for select/sequence groups
-  let pendingLabel: { id?: string; label: string; required: boolean } | null = null;
-  let groupStack: { name?: string; children: Block[] } | null = null;
+  let pendingLabel: { id?: string; label: string; required: boolean; condition?: Condition } | null =
+    null;
+  let groupStack: {
+    name?: string;
+    children: Block[];
+    repeatable?: true;
+    minRows?: number;
+    maxRows?: number;
+  } | null = null;
 
   function addBlock(block: Block) {
     if (groupStack) {
@@ -604,7 +784,12 @@ function assemble(tokens: LineToken[]): Block[] {
     }
 
     if (token.type === 'label-line') {
-      pendingLabel = { id: token.id, label: token.label, required: token.required };
+      pendingLabel = {
+        id: token.id,
+        label: token.label,
+        required: token.required,
+        condition: token.condition,
+      };
       i++;
       continue;
     }
@@ -621,23 +806,49 @@ function assemble(tokens: LineToken[]): Block[] {
     }
 
     if (token.type === 'group-start') {
-      groupStack = { name: token.name, children: [] };
+      groupStack = {
+        name: token.name,
+        children: [],
+        repeatable: token.repeatable,
+        minRows: token.minRows,
+        maxRows: token.maxRows,
+      };
       i++;
       continue;
     }
 
     if (token.type === 'group-end') {
       if (groupStack) {
-        const group: Block = { type: 'group', children: groupStack.children };
-        if (groupStack.name) (group as any).name = groupStack.name;
-        blocks.push(group);
+        const group: any = { type: 'group', children: groupStack.children };
+        if (groupStack.name) group.name = groupStack.name;
+        if (groupStack.repeatable) group.repeatable = true;
+        if (groupStack.minRows !== undefined) group.minRows = groupStack.minRows;
+        if (groupStack.maxRows !== undefined) group.maxRows = groupStack.maxRows;
+        blocks.push(group as Block);
         groupStack = null;
       }
       i++;
       continue;
     }
 
-    // Collect single-select options
+    // Table block — read-ahead for columns
+    if (token.type === 'table-start') {
+      const columns: TableColumn[] = [];
+      i++;
+      while (i < tokens.length && tokens[i].type === 'table-column') {
+        const col = tokens[i] as Extract<LineToken, { type: 'table-column' }>;
+        columns.push({ id: deriveId(col.label), label: col.label, columnType: col.columnType });
+        i++;
+      }
+      const block: any = { type: 'table', columns };
+      if (token.id) block.id = token.id;
+      if (token.label) block.label = token.label;
+      if (token.condition) block.condition = token.condition;
+      addBlock(block as Block);
+      continue;
+    }
+
+    // Single-select options
     if (token.type === 'single-select-option') {
       const options: SingleSelectOption[] = [];
       while (i < tokens.length && tokens[i].type === 'single-select-option') {
@@ -648,25 +859,20 @@ function assemble(tokens: LineToken[]): Block[] {
         i++;
       }
 
-      // If no explicit default, first option is default
       if (!options.some((o) => o.default)) {
         options[0].default = true;
       }
 
       const label = pendingLabel?.label ?? options[0].text;
-      const block: Block = {
-        type: 'single-select',
-        id: pendingLabel?.id,
-        label,
-        options,
-      };
-      if (pendingLabel?.required) (block as any).required = true;
-      addBlock(block);
+      const block: any = { type: 'single-select', id: pendingLabel?.id, label, options };
+      if (pendingLabel?.required) block.required = true;
+      if (pendingLabel?.condition) block.condition = pendingLabel.condition;
+      addBlock(block as Block);
       pendingLabel = null;
       continue;
     }
 
-    // Collect multi-select options
+    // Multi-select options
     if (token.type === 'multi-select-option') {
       const options: MultiSelectOption[] = [];
       while (i < tokens.length && tokens[i].type === 'multi-select-option') {
@@ -679,19 +885,15 @@ function assemble(tokens: LineToken[]): Block[] {
       }
 
       const label = pendingLabel?.label ?? options[0].text;
-      const block: Block = {
-        type: 'multi-select',
-        id: pendingLabel?.id,
-        label,
-        options,
-      };
-      if (pendingLabel?.required) (block as any).required = true;
-      addBlock(block);
+      const block: any = { type: 'multi-select', id: pendingLabel?.id, label, options };
+      if (pendingLabel?.required) block.required = true;
+      if (pendingLabel?.condition) block.condition = pendingLabel.condition;
+      addBlock(block as Block);
       pendingLabel = null;
       continue;
     }
 
-    // Collect sequence options
+    // Sequence options
     if (token.type === 'sequence-option') {
       const items: string[] = [];
       while (i < tokens.length && tokens[i].type === 'sequence-option') {
@@ -701,18 +903,13 @@ function assemble(tokens: LineToken[]): Block[] {
       }
 
       const label = pendingLabel?.label ?? items[0];
-      const block: Block = {
-        type: 'sequence',
-        id: pendingLabel?.id,
-        label,
-        items,
-      };
-      addBlock(block);
+      const block: any = { type: 'sequence', id: pendingLabel?.id, label, items };
+      if (pendingLabel?.condition) block.condition = pendingLabel.condition;
+      addBlock(block as Block);
       pendingLabel = null;
       continue;
     }
 
-    // Direct block tokens
     if (token.type === 'header') {
       addBlock({ type: 'header', level: token.level, text: token.text });
       i++;
@@ -732,14 +929,15 @@ function assemble(tokens: LineToken[]): Block[] {
     }
 
     if (token.type === 'confirmation') {
-      const block: Block = {
+      const block: any = {
         type: 'confirmation',
         id: token.id,
         label: token.label,
-        yesLabel: token.yesLabel,
-        noLabel: token.noLabel,
+        yesLabel: token.yesLabel ?? options?.defaults?.confirmationYesLabel ?? 'Yes',
+        noLabel: token.noLabel ?? options?.defaults?.confirmationNoLabel ?? 'No',
       };
-      addBlock(block);
+      if (token.condition) block.condition = token.condition;
+      addBlock(block as Block);
       i++;
       continue;
     }
@@ -754,7 +952,8 @@ function assemble(tokens: LineToken[]): Block[] {
       if (token.required) block.required = true;
       if (token.placeholder) block.placeholder = token.placeholder;
       if (token.prefill) block.prefill = token.prefill;
-      addBlock(block);
+      if (token.condition) block.condition = token.condition;
+      addBlock(block as Block);
       i++;
       continue;
     }
@@ -770,7 +969,8 @@ function assemble(tokens: LineToken[]): Block[] {
       if (token.placeholder) block.placeholder = token.placeholder;
       if (token.prefill) block.prefill = token.prefill;
       if (token.displayFormat) block.displayFormat = token.displayFormat;
-      addBlock(block);
+      if (token.condition) block.condition = token.condition;
+      addBlock(block as Block);
       i++;
       continue;
     }
@@ -786,7 +986,8 @@ function assemble(tokens: LineToken[]): Block[] {
       };
       if (token.step !== undefined) block.step = token.step;
       if (token.displayFormat) block.displayFormat = token.displayFormat;
-      addBlock(block);
+      if (token.condition) block.condition = token.condition;
+      addBlock(block as Block);
       i++;
       continue;
     }
@@ -803,7 +1004,8 @@ function assemble(tokens: LineToken[]): Block[] {
         default: token.default,
       };
       if (token.required) block.required = true;
-      addBlock(block);
+      if (token.condition) block.condition = token.condition;
+      addBlock(block as Block);
       i++;
       continue;
     }
@@ -816,7 +1018,8 @@ function assemble(tokens: LineToken[]): Block[] {
       };
       if (token.required) block.required = true;
       if (token.extensions) block.extensions = token.extensions;
-      addBlock(block);
+      if (token.condition) block.condition = token.condition;
+      addBlock(block as Block);
       i++;
       continue;
     }
@@ -828,20 +1031,51 @@ function assemble(tokens: LineToken[]): Block[] {
         label: token.label,
       };
       if (token.required) block.required = true;
-      addBlock(block);
+      if (token.condition) block.condition = token.condition;
+      addBlock(block as Block);
       i++;
       continue;
     }
 
-    // Fallback: skip unknown tokens
+    if (token.type === 'computed') {
+      const block: any = {
+        type: 'computed',
+        id: token.id,
+        label: token.label,
+        expression: token.expression,
+      };
+      if (token.displayFormat) block.displayFormat = token.displayFormat;
+      if (token.condition) block.condition = token.condition;
+      addBlock(block as Block);
+      i++;
+      continue;
+    }
+
+    if (token.type === 'custom') {
+      const block: any = {
+        type: 'custom',
+        customType: token.customType,
+        payload: token.payload,
+      };
+      if (token.id) block.id = token.id;
+      if (token.condition) block.condition = token.condition;
+      addBlock(block as Block);
+      i++;
+      continue;
+    }
+
+    // Skip unrecognised tokens (table-column outside table context, etc.)
     i++;
   }
 
   // Close unclosed group
   if (groupStack) {
-    const group: Block = { type: 'group', children: groupStack.children };
-    if (groupStack.name) (group as any).name = groupStack.name;
-    blocks.push(group);
+    const group: any = { type: 'group', children: groupStack.children };
+    if (groupStack.name) group.name = groupStack.name;
+    if (groupStack.repeatable) group.repeatable = true;
+    if (groupStack.minRows !== undefined) group.minRows = groupStack.minRows;
+    if (groupStack.maxRows !== undefined) group.maxRows = groupStack.maxRows;
+    blocks.push(group as Block);
   }
 
   return blocks;
@@ -857,14 +1091,14 @@ function assignIds(blocks: Block[]): void {
   for (const block of allBlocks) {
     if (isInteractive(block)) {
       if (!(block as any).id) {
-        (block as any).id = deriveId((block as any).label);
+        const label = (block as any).label ?? (block as any).customType ?? 'block';
+        (block as any).id = deriveId(label);
       }
       ids.push((block as any).id);
       interactiveBlocks.push(block);
     }
   }
 
-  // Resolve collisions
   resolveCollisions(ids);
   for (let i = 0; i < interactiveBlocks.length; i++) {
     (interactiveBlocks[i] as any).id = ids[i];
@@ -884,7 +1118,6 @@ function flattenBlocks(blocks: Block[]): Block[] {
 }
 
 function cleanBlock(block: any): void {
-  // Remove undefined fields for clean JSON output
   for (const key of Object.keys(block)) {
     if (block[key] === undefined) {
       delete block[key];
@@ -902,6 +1135,11 @@ function cleanBlock(block: any): void {
 export interface ParseOptions {
   /** Run the normalizer to fix common SLM mistakes before parsing. Default: false. */
   normalize?: boolean;
+  /** Default label overrides for blocks that use computed defaults. */
+  defaults?: {
+    confirmationYesLabel?: string;
+    confirmationNoLabel?: string;
+  };
 }
 
 export function parse(input: string, options?: ParseOptions): AST {
@@ -911,12 +1149,15 @@ export function parse(input: string, options?: ParseOptions): AST {
   }
 
   const tokens = tokenize(source);
-  const blocks = assemble(tokens);
+  const blocks = assemble(tokens, options);
   assignIds(blocks);
 
   for (const block of blocks) {
     cleanBlock(block);
   }
 
-  return { version: '0.9', blocks };
+  return { version: '1.0', blocks };
 }
+
+// Suppress unused-variable warning for TYPED_INPUT_FORMATS
+void TYPED_INPUT_FORMATS;

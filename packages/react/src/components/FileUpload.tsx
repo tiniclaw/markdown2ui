@@ -5,7 +5,7 @@ import type { FileUploadBlock, ImageUploadBlock } from '@markdown2ui/parser';
 type UploadBlock = FileUploadBlock | ImageUploadBlock;
 
 export function FileUpload({ block }: { block: UploadBlock }) {
-  const { values, setValue, errors } = useFormContext();
+  const { values, setValue, errors, strings } = useFormContext();
   const fileRef = useRef<HTMLInputElement>(null);
   const value = values[block.id!] as string | undefined;
   const error = errors[block.id!];
@@ -42,7 +42,7 @@ export function FileUpload({ block }: { block: UploadBlock }) {
         <div className="m2u-upload-area" onClick={() => fileRef.current?.click()}>
           <span className="m2u-upload-icon">{isImage ? '📷' : '📁'}</span>
           <span className="m2u-upload-text">
-            {isImage ? 'Upload image' : 'Upload file'}
+            {isImage ? strings.uploadImage : strings.uploadFile}
           </span>
         </div>
       )}

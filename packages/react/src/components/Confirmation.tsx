@@ -21,7 +21,7 @@ export function Confirmation({ block }: { block: ConfirmationBlock }) {
           className={`m2u-btn ${confirmed ? 'm2u-btn--primary m2u-btn--active' : 'm2u-btn--secondary'}`}
           onClick={() => {
             setValue(block.id!, true);
-            if (onSubmit) onSubmit();
+            if (onSubmit) onSubmit({ [block.id!]: true });
           }}
         >
           {block.yesLabel}

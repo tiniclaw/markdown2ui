@@ -28,10 +28,31 @@ function getDefaultValue(block: TemporalBlock): string {
   }
 }
 
+// Format a stored YYYY-MM-DD or YYYY-MM-DDTHH:mm value for locale display.
+// Returns null for 'time' blocks (no locale formatting needed) or unparseable values.
+function formatLocaleDate(value: string, type: TemporalBlock['type']): string | null {
+  if (!value || type === 'time') return null;
+  try {
+    if (type === 'date') {
+      const [y, mo, d] = value.split('-').map(Number);
+      if (!y || !mo || !d) return null;
+      // Use local midnight to avoid UTC-offset date shift
+      return new Intl.DateTimeFormat(undefined, { dateStyle: 'long' }).format(new Date(y, mo - 1, d));
+    }
+    if (type === 'datetime') {
+      return new Intl.DateTimeFormat(undefined, { dateStyle: 'long', timeStyle: 'short' }).format(new Date(value));
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export function DatePicker({ block }: { block: TemporalBlock }) {
   const { values, setValue, errors } = useFormContext();
   const value = (values[block.id!] as string) ?? getDefaultValue(block);
   const error = errors[block.id!];
+  const localeDisplay = formatLocaleDate(value, block.type);
 
   return (
     <div className="m2u-card">
@@ -47,6 +68,9 @@ export function DatePicker({ block }: { block: TemporalBlock }) {
         aria-required={block.required || undefined}
         onChange={(e) => setValue(block.id!, e.target.value)}
       />
+      {localeDisplay && (
+        <p className="m2u-date-display" aria-live="polite">{localeDisplay}</p>
+      )}
       {error && <p className="m2u-error">{error}</p>}
       {block.hint && <p className="m2u-hint">{block.hint}</p>}
     </div>

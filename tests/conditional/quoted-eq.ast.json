@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "text-input",
+      "id": "country",
+      "label": "Country",
+      "multiline": false
+    },
+    {
+      "type": "text-input",
+      "id": "details",
+      "label": "US-specific details",
+      "multiline": false,
+      "condition": {
+        "fieldId": "country",
+        "op": "==",
+        "value": "United States"
+      }
+    }
+  ]
+}

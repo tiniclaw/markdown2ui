@@ -8,7 +8,7 @@ function OptionText({ text }: { text: string }) {
 }
 
 export function SingleSelect({ block }: { block: SingleSelectBlock }) {
-  const { values, setValue } = useFormContext();
+  const { values, setValue, strings } = useFormContext();
   const selected = values[block.id!] as string | undefined;
   const freestyle = values[`${block.id!}__freestyle`] as string | undefined;
 
@@ -65,7 +65,7 @@ export function SingleSelect({ block }: { block: SingleSelectBlock }) {
         <input
           type="text"
           className="m2u-freestyle"
-          placeholder="Or type your answer..."
+          placeholder={strings.singleSelectFreestyle}
           value={freestyle || ''}
           onChange={(e) => {
             setValue(`${block.id!}__freestyle`, e.target.value);

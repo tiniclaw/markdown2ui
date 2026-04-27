@@ -2,7 +2,7 @@ import { useFormContext } from '../context.js';
 import type { SequenceBlock } from '@markdown2ui/parser';
 
 export function Sequence({ block }: { block: SequenceBlock }) {
-  const { values, setValue } = useFormContext();
+  const { values, setValue, strings } = useFormContext();
   const items = (values[block.id!] as string[]) || block.items;
 
   function moveItem(fromIndex: number, toIndex: number) {
@@ -24,13 +24,13 @@ export function Sequence({ block }: { block: SequenceBlock }) {
             <span className="m2u-sequence-controls">
               <button
                 type="button"
-                aria-label={`Move ${item} up`}
+                aria-label={strings.moveUp(item)}
                 disabled={index === 0}
                 onClick={() => moveItem(index, index - 1)}
               >↑</button>
               <button
                 type="button"
-                aria-label={`Move ${item} down`}
+                aria-label={strings.moveDown(item)}
                 disabled={index === items.length - 1}
                 onClick={() => moveItem(index, index + 1)}
               >↓</button>

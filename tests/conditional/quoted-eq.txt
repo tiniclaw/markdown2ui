@@ -1,0 +1,2 @@
+> country: Country
+> details: US-specific details @if:country=="United States"

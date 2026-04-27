@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "slider",
+      "id": "cost",
+      "label": "Cost",
+      "min": 0,
+      "max": 1000,
+      "default": 0
+    },
+    {
+      "type": "computed",
+      "label": "Total Cost",
+      "expression": {
+        "type": "sum",
+        "fields": [
+          "cost"
+        ]
+      },
+      "displayFormat": {
+        "type": "currency",
+        "code": "USD"
+      }
+    }
+  ]
+}

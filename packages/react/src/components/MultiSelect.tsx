@@ -8,7 +8,7 @@ function OptionText({ text }: { text: string }) {
 }
 
 export function MultiSelect({ block }: { block: MultiSelectBlock }) {
-  const { values, setValue } = useFormContext();
+  const { values, setValue, strings } = useFormContext();
   const selected = (values[block.id!] as string[]) || [];
 
   function toggle(text: string) {
@@ -60,7 +60,7 @@ export function MultiSelect({ block }: { block: MultiSelectBlock }) {
       <input
         type="text"
         className="m2u-freestyle"
-        placeholder="Or add your own..."
+        placeholder={strings.multiSelectFreestyle}
         value={values[`${block.id!}__freestyle`] || ''}
         onChange={(e) => setValue(`${block.id!}__freestyle`, e.target.value)}
       />

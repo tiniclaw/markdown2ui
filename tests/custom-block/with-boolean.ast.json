@@ -1,0 +1,14 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "custom",
+      "customType": "toggle",
+      "payload": {
+        "label": "Dark mode",
+        "enabled": true
+      },
+      "id": "toggle"
+    }
+  ]
+}
