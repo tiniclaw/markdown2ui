@@ -1,0 +1,14 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "custom",
+      "customType": "badge",
+      "payload": {
+        "label": "Verified",
+        "color": "green"
+      },
+      "id": "badge"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "table",
+      "columns": [
+        {
+          "id": "category",
+          "label": "Category",
+          "columnType": {
+            "kind": "text"
+          }
+        },
+        {
+          "id": "cost",
+          "label": "Cost",
+          "columnType": {
+            "kind": "number",
+            "format": {
+              "type": "currency",
+              "code": "USD"
+            }
+          }
+        }
+      ],
+      "label": "Budget",
+      "id": "budget"
+    }
+  ]
+}

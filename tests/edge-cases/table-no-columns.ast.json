@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "table",
+      "columns": [],
+      "label": "Empty Grid",
+      "id": "empty_grid"
+    },
+    {
+      "type": "text-input",
+      "id": "name",
+      "label": "Name after table",
+      "multiline": false
+    }
+  ]
+}

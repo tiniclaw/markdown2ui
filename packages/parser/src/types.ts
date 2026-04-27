@@ -1,5 +1,5 @@
 export interface AST {
-  version: '0.9';
+  version: '1.0';
   blocks: Block[];
 }
 
@@ -16,11 +16,20 @@ export interface MultiSelectOption {
   image?: string;
 }
 
+export type ConditionOperator = '==' | '!=';
+
+export interface Condition {
+  fieldId: string;
+  op: ConditionOperator;
+  value: string;
+}
+
 interface BaseBlock {
   type: string;
   id?: string;
   required?: boolean;
   hint?: string;
+  condition?: Condition;
 }
 
 export interface SingleSelectBlock extends BaseBlock {
@@ -137,7 +146,46 @@ export interface ProseBlock {
 export interface GroupBlock {
   type: 'group';
   name?: string;
+  id?: string;
   children: Block[];
+  repeatable?: true;
+  minRows?: number;
+  maxRows?: number;
+}
+
+export type TableColumnType =
+  | { kind: 'text' }
+  | { kind: 'number'; format?: FormatAnnotation };
+
+export interface TableColumn {
+  id: string;
+  label: string;
+  columnType: TableColumnType;
+}
+
+export interface TableBlock extends BaseBlock {
+  type: 'table';
+  label?: string;
+  columns: TableColumn[];
+  minRows?: number;
+  maxRows?: number;
+}
+
+export type ComputedExpression =
+  | { type: 'sum'; fields: string[] }
+  | { type: 'count'; fields: string[] };
+
+export interface ComputedBlock extends BaseBlock {
+  type: 'computed';
+  label: string;
+  expression: ComputedExpression;
+  displayFormat?: FormatAnnotation;
+}
+
+export interface CustomBlock extends BaseBlock {
+  type: 'custom';
+  customType: string;
+  payload: Record<string, unknown>;
 }
 
 export type Block =
@@ -157,4 +205,7 @@ export type Block =
   | HintBlock
   | DividerBlock
   | ProseBlock
-  | GroupBlock;
+  | GroupBlock
+  | TableBlock
+  | ComputedBlock
+  | CustomBlock;

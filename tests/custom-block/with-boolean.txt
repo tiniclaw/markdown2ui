@@ -1,0 +1,1 @@
+[custom:toggle label="Dark mode" enabled=true]

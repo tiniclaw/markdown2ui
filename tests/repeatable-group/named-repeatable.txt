@@ -1,0 +1,4 @@
+{ Shopping list @repeatable
+> product: Product
+> qty: Quantity
+}

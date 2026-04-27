@@ -1,0 +1,3 @@
+state: Which state? @if:country==US
+- California
+- New York

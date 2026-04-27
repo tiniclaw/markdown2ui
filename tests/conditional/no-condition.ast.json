@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "text-input",
+      "id": "name",
+      "label": "Your name",
+      "multiline": false
+    }
+  ]
+}

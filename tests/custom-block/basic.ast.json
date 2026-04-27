@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "custom",
+      "customType": "rating",
+      "payload": {
+        "label": "Rate this"
+      },
+      "id": "rating"
+    }
+  ]
+}

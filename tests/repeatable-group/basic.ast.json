@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "group",
+      "children": [
+        {
+          "type": "text-input",
+          "id": "item",
+          "label": "Item name",
+          "multiline": false
+        }
+      ],
+      "name": "Items",
+      "repeatable": true
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+~ price1: Price 1 [0 - 1000] (0)
+~ price2: Price 2 [0 - 1000] (0)
+[computed Total @sum:price1,price2]

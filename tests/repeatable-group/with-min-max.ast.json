@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "group",
+      "children": [
+        {
+          "type": "text-input",
+          "id": "name",
+          "label": "Full name",
+          "multiline": false
+        }
+      ],
+      "name": "Attendees",
+      "repeatable": true,
+      "minRows": 1,
+      "maxRows": 5
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+> show: Show details?
+[table: Extra Data] @if:show==yes
+- Label: [text]
+- Value: [number]

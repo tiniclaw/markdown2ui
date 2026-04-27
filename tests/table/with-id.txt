@@ -1,0 +1,3 @@
+[table: inv: Inventory]
+- Product: [text]
+- Qty: [number]

@@ -1,0 +1,2 @@
+~ cost: Cost [0 - 1000] (0)
+[computed Total Cost @sum:cost @currency(USD)]

@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "table",
+      "columns": [
+        {
+          "id": "product",
+          "label": "Product",
+          "columnType": {
+            "kind": "text"
+          }
+        },
+        {
+          "id": "qty",
+          "label": "Qty",
+          "columnType": {
+            "kind": "number"
+          }
+        }
+      ],
+      "id": "inv",
+      "label": "Inventory"
+    }
+  ]
+}

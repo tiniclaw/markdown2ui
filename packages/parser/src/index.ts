@@ -4,6 +4,8 @@ export { normalize } from './normalize.js';
 export type {
   AST,
   Block,
+  Condition,
+  ConditionOperator,
   SingleSelectBlock,
   MultiSelectBlock,
   SequenceBlock,
@@ -23,6 +25,12 @@ export type {
   DividerBlock,
   ProseBlock,
   GroupBlock,
+  TableColumn,
+  TableColumnType,
+  TableBlock,
+  ComputedExpression,
+  ComputedBlock,
+  CustomBlock,
   SingleSelectOption,
   MultiSelectOption,
 } from './types.js';

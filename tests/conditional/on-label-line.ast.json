@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "single-select",
+      "id": "state",
+      "label": "Which state?",
+      "options": [
+        {
+          "text": "California",
+          "default": true
+        },
+        {
+          "text": "New York",
+          "default": false
+        }
+      ],
+      "condition": {
+        "fieldId": "country",
+        "op": "==",
+        "value": "US"
+      }
+    }
+  ]
+}

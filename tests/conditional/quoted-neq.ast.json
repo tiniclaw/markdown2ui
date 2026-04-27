@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "text-input",
+      "id": "city",
+      "label": "City",
+      "multiline": false
+    },
+    {
+      "type": "text-input",
+      "id": "note",
+      "label": "Non-NYC note",
+      "multiline": false,
+      "condition": {
+        "fieldId": "city",
+        "op": "!=",
+        "value": "New York City"
+      }
+    }
+  ]
+}

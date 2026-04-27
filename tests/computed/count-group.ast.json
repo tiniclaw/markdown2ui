@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "computed",
+      "label": "Row Count",
+      "expression": {
+        "type": "count",
+        "fields": [
+          "items"
+        ]
+      }
+    }
+  ]
+}

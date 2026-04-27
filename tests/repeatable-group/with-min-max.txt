@@ -1,0 +1,3 @@
+{ Attendees @repeatable @min(1) @max(5)
+> name: Full name
+}

@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "computed",
+      "id": "subtotal",
+      "label": "Subtotal",
+      "expression": {
+        "type": "sum",
+        "fields": [
+          "price1",
+          "price2"
+        ]
+      }
+    }
+  ]
+}

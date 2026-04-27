@@ -1,0 +1,1 @@
+[custom:stars label="Stars" max=5]

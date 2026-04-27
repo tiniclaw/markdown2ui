@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "text-input",
+      "id": "show",
+      "label": "Show details?",
+      "multiline": false
+    },
+    {
+      "type": "table",
+      "columns": [
+        {
+          "id": "label",
+          "label": "Label",
+          "columnType": {
+            "kind": "text"
+          }
+        },
+        {
+          "id": "value",
+          "label": "Value",
+          "columnType": {
+            "kind": "number"
+          }
+        }
+      ],
+      "label": "Extra Data",
+      "condition": {
+        "fieldId": "show",
+        "op": "==",
+        "value": "yes"
+      },
+      "id": "extra_data"
+    }
+  ]
+}

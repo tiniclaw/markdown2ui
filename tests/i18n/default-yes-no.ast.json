@@ -1,0 +1,12 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "confirmation",
+      "id": "confirm_action",
+      "label": "Confirm action",
+      "yesLabel": "Yes",
+      "noLabel": "No"
+    }
+  ]
+}

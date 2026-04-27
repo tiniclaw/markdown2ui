@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "text-input",
+      "id": "state",
+      "label": "What state are you in?",
+      "multiline": false
+    },
+    {
+      "type": "text-input",
+      "id": "ca_question",
+      "label": "CA question",
+      "multiline": false,
+      "condition": {
+        "fieldId": "state",
+        "op": "==",
+        "value": "CA"
+      }
+    }
+  ]
+}

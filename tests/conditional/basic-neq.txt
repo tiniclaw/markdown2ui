@@ -1,0 +1,2 @@
+> country: Country?
+> Non-US details @if:country!=US

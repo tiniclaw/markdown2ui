@@ -1,0 +1,32 @@
+{
+  "version": "1.0",
+  "blocks": [
+    {
+      "type": "slider",
+      "id": "price1",
+      "label": "Price 1",
+      "min": 0,
+      "max": 1000,
+      "default": 0
+    },
+    {
+      "type": "slider",
+      "id": "price2",
+      "label": "Price 2",
+      "min": 0,
+      "max": 1000,
+      "default": 0
+    },
+    {
+      "type": "computed",
+      "label": "Total",
+      "expression": {
+        "type": "sum",
+        "fields": [
+          "price1",
+          "price2"
+        ]
+      }
+    }
+  ]
+}

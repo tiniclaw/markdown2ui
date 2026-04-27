@@ -1,4 +1,6 @@
 import type { Block } from '@markdown2ui/parser';
+import { useFormContext } from '../context.js';
+import { isBlockVisible } from './Markdown2UI.js';
 import { SingleSelect } from './SingleSelect.js';
 import { MultiSelect } from './MultiSelect.js';
 import { Sequence } from './Sequence.js';
@@ -12,8 +14,19 @@ import { Header } from './Header.js';
 import { Prose } from './Prose.js';
 import { Divider } from './Divider.js';
 import { Group } from './Group.js';
+import { TableInput } from './TableInput.js';
+import { ComputedField } from './ComputedField.js';
 
 export function BlockRenderer({ block }: { block: Block }) {
+  const { values, blockRenderers } = useFormContext();
+
+  // Plugin renderers take priority over built-ins
+  const CustomRenderer = blockRenderers?.[block.type];
+  if (CustomRenderer) return <CustomRenderer block={block} />;
+
+  // Evaluate condition — return null if block should be hidden
+  if (!isBlockVisible(block, values)) return null;
+
   switch (block.type) {
     case 'single-select':
       return <SingleSelect block={block} />;
@@ -45,8 +58,14 @@ export function BlockRenderer({ block }: { block: Block }) {
     case 'group':
       return <Group block={block} />;
     case 'hint':
-      // Hints are attached to blocks during parsing; standalone hints render as prose
       return <p className="m2u-hint">{block.text}</p>;
+    case 'table':
+      return <TableInput block={block} />;
+    case 'computed':
+      return <ComputedField block={block} />;
+    case 'custom':
+      // Custom blocks without a registered renderer are silently skipped
+      return null;
     default:
       return null;
   }
